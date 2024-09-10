@@ -10,20 +10,8 @@ export class AppConfigService {
     return parseInt(this.getEnvVariable('APP_PORT'), 10);
   }
 
-  get dbUsername(): string {
-    return this.getEnvVariable('DB_USERNAME');
-  }
-
-  get dbPassword(): string {
-    return this.getEnvVariable('DB_PASSWORD');
-  }
-
-  get dbName(): string {
-    return this.getEnvVariable('DB_NAME');
-  }
-
-  get dbPort(): number {
-    return parseInt(this.getEnvVariable('DB_PORT'), 10);
+  get dbUrl(): string {
+    return this.getEnvVariable('DB_URL');
   }
 
   private getEnvVariable(key: string): string {
