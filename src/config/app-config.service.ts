@@ -1,24 +1,42 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import * as dotenv from 'dotenv';
 
 @Injectable()
 export class AppConfigService {
+  constructor(private configService: ConfigService) {}
+
+  static create(): AppConfigService {
+    dotenv.config();
+    const configService = new ConfigService();
+    return new AppConfigService(configService);
+  }
+
   get appEnv(): string {
-    return this.getEnvVariable('APP_ENV');
+    return this.configService.get<string>('APP_ENV');
   }
 
   get appPort(): number {
-    return parseInt(this.getEnvVariable('APP_PORT'), 10);
+    return this.configService.get<number>('APP_PORT');
   }
 
-  get dbUrl(): string {
-    return this.getEnvVariable('DB_URL');
+  get dbHost(): string {
+    return this.configService.get<string>('DB_HOST');
   }
 
-  private getEnvVariable(key: string): string {
-    const value = process.env[key];
-    if (!value) {
-      throw new Error(`Environment variable ${key} is not defined.`);
-    }
-    return value;
+  get dbPort(): number {
+    return this.configService.get<number>('DB_PORT');
+  }
+
+  get dbUsername(): string {
+    return this.configService.get<string>('DB_USERNAME');
+  }
+
+  get dbPassword(): string {
+    return this.configService.get<string>('DB_PASSWORD');
+  }
+
+  get dbName(): string {
+    return this.configService.get<string>('DB_NAME');
   }
 }

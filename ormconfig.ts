@@ -2,13 +2,17 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AppConfigService } from 'src/config';
 import { DataSource, DataSourceOptions, LoggerOptions } from 'typeorm';
 
-const appConfigService = new AppConfigService();
+const appConfigService = AppConfigService.create();
 
 const isProduction = appConfigService.appEnv === 'production';
 
 const baseConfig = {
   type: 'postgres' as const,
-  url: appConfigService.dbUrl,
+  host: appConfigService.dbHost,
+  port: appConfigService.dbPort,
+  username: appConfigService.dbUsername,
+  password: appConfigService.dbPassword,
+  database: appConfigService.dbName,
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
   migrations: [__dirname + '/src/database/migrations/*{.ts,.js}'],
   synchronize: false,
