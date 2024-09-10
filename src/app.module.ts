@@ -12,6 +12,6 @@ import { AppConfigService } from './config';
   ],
   controllers: [AppController],
   providers: [AppService, AppConfigService],
-  exports: [AppConfigService]
+  exports: [AppConfigService],
 })
 export class AppModule {}
