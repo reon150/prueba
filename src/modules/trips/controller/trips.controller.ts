@@ -12,14 +12,15 @@ import {
   ApiOperation,
   ApiQuery,
   ApiBadRequestResponse,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import {
   CreateTripRequestDto,
   GetTripsRequestDto,
   GetTripsResponseDto,
   UpdateTripRequestDto,
+  UpdateTripResponseDto,
 } from '../dto';
-import { Trip } from '../entities';
 import { TripsService } from '../service/Trips.service';
 import { ApiPaginatedResponse, PaginationResponseDto } from 'src/common';
 
@@ -45,8 +46,6 @@ export class TripsController {
   async findAll(
     @Query() query: GetTripsRequestDto,
   ): Promise<PaginationResponseDto<GetTripsResponseDto>> {
-    //TODO: Add a constant limit for pagination
-    //TODO: Add mapper for DTOs
     return this.tripsService.findAll(query);
   }
 
@@ -55,18 +54,17 @@ export class TripsController {
   @ApiOperation({ summary: 'Create a new trip' })
   async createTrip(
     @Body() createTripRequestDto: CreateTripRequestDto,
-  ): Promise<Trip> {
-    //TODO: Create response dto
+  ): Promise<CreateTripRequestDto> {
     return this.tripsService.create(createTripRequestDto);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update trip details' })
+  @ApiNotFoundResponse({ description: 'Trip not found' })
   async updateTrip(
     @Param('id') id: string,
     @Body() updateTripRequestDto: UpdateTripRequestDto,
-  ): Promise<Trip> {
-    //TODO: Create response dto
+  ): Promise<UpdateTripResponseDto> {
     return this.tripsService.update(id, updateTripRequestDto);
   }
 }

@@ -6,9 +6,11 @@ import {
   GetTripsRequestDto,
   GetTripsResponseDto,
   UpdateTripRequestDto,
+  UpdateTripResponseDto,
 } from '../dto';
 import { Trip } from '../entities';
-import { PaginationResponseDto } from 'src/common';
+import { getLimitValue, PaginationResponseDto } from 'src/common';
+import { TripToDtoMapper } from '../mappers';
 
 @Injectable()
 export class TripsService {
@@ -19,6 +21,8 @@ export class TripsService {
   async findAll(
     query: GetTripsRequestDto,
   ): Promise<PaginationResponseDto<GetTripsResponseDto>> {
+    query.limit = getLimitValue(query.limit);
+
     const { driverId, passengerId, status, page, limit } = query;
 
     const qb = this.tripRepository
@@ -40,28 +44,13 @@ export class TripsService {
 
     qb.skip((page - 1) * limit).take(limit);
 
-    const [trips, total] = await qb.getManyAndCount();
-
-    const data = trips.map((trip) => ({
-      id: trip.id,
-      driver: {
-        id: trip.driver.id,
-        name: trip.driver.name,
-      },
-      passenger: {
-        id: trip.passenger.id,
-        name: trip.passenger.name,
-      },
-      startLatitude: trip.startLatitude,
-      startLongitude: trip.startLongitude,
-      endLatitude: trip.endLatitude,
-      endLongitude: trip.endLongitude,
-      status: trip.status,
-    }));
+    const [data, total] = await qb.getManyAndCount();
 
     const basePath = 'trips';
+    const trips = TripToDtoMapper.toGetTripsResponseDtos(data);
+
     return new PaginationResponseDto(
-      data,
+      trips,
       total,
       query.page,
       query.limit,
@@ -69,25 +58,30 @@ export class TripsService {
     );
   }
 
-  async create(createTripRequestDto: CreateTripRequestDto): Promise<Trip> {
+  async create(
+    createTripRequestDto: CreateTripRequestDto,
+  ): Promise<CreateTripRequestDto> {
     const trip = this.tripRepository.create(createTripRequestDto);
 
-    return this.tripRepository.save(trip);
+    const tripSaved = await this.tripRepository.save(trip);
+
+    return TripToDtoMapper.toCreateTripResponseDto(tripSaved);
   }
 
   async update(
     id: string,
     updateTripRequestDto: UpdateTripRequestDto,
-  ): Promise<Trip> {
+  ): Promise<UpdateTripResponseDto> {
     const trip = await this.tripRepository.findOne({ where: { id } });
 
     if (!trip) {
       throw new NotFoundException(`Trip with ID ${id} not found`);
     }
-    // TODO: Add documentation for NotFoundException
 
     Object.assign(trip, updateTripRequestDto);
 
-    return this.tripRepository.save(trip);
+    const tripSaved = await this.tripRepository.save(trip);
+
+    return TripToDtoMapper.toUpdateTripResponseDto(tripSaved);
   }
 }
