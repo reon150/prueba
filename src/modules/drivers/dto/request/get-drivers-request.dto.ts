@@ -3,7 +3,7 @@ import { Transform } from 'class-transformer';
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
 import { PaginationRequestDto } from 'src/common';
 
-enum DriverSortBy {
+enum DriverSortByEnum {
   id = 'id',
   name = 'name',
   licenseNumber = 'licenseNumber',
@@ -24,12 +24,12 @@ export class GetDriversRequestDto extends PaginationRequestDto {
 
   @ApiPropertyOptional({
     description: 'Field to sort by',
-    enum: DriverSortBy,
+    enum: DriverSortByEnum,
     enumName: 'DriverSortBy',
   })
-  @IsEnum(DriverSortBy)
+  @IsEnum(DriverSortByEnum)
   @IsOptional()
-  sortBy?: DriverSortBy;
+  sortBy?: DriverSortByEnum;
 
   @ApiPropertyOptional({
     description: 'Order of sorting',
