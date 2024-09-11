@@ -1,17 +1,40 @@
-import { Controller, Get, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
-import { PassengersService } from '../service/passengers.service';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import {
+  ApiTags,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
   ApiBadRequestResponse,
-  ApiPaginatedResponse,
-  PaginationResponseDto,
-} from 'src/common';
-import { GetPassengersRequestDto, GetPassengersResponseDto } from '../dto';
+} from '@nestjs/swagger';
+import { PassengersService } from '../service/passengers.service';
+import { ApiPaginatedResponse, PaginationResponseDto } from 'src/common';
+import {
+  GetPassengerResponseDto,
+  GetPassengersRequestDto,
+  GetPassengersResponseDto,
+} from '../dto';
 
 @ApiTags('passengers')
 @Controller('passengers')
 export class PassengersController {
   constructor(private readonly passengersService: PassengersService) {}
+
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Retrieve a single passenger',
+    description:
+      'Returns a single passenger along with associated trip details.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The passenger data with associated trips',
+    type: GetPassengerResponseDto,
+  })
+  @ApiBadRequestResponse({ description: 'Invalid ID supplied' })
+  @ApiResponse({ status: 404, description: 'Passenger not found' })
+  async findOne(@Param('id') id: string): Promise<GetPassengerResponseDto> {
+    return this.passengersService.findOne(id);
+  }
 
   @Get()
   @ApiOperation({

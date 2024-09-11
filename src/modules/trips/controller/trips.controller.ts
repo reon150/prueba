@@ -50,6 +50,7 @@ export class TripsController {
     return this.tripsService.findAll(query);
   }
 
+  //TODO: Add documentation for swagger
   @Post()
   @ApiOperation({ summary: 'Create a new trip' })
   async createTrip(

@@ -7,7 +7,8 @@ export function ApiBadRequestResponse(): MethodDecorator {
     schema: {
       example: {
         message: [
-          'sortBy must be one of the following values: id, name, licenseNumber, email, phoneNumber, createdAt',
+          'Invalid input parameters.',
+          'Ensure all required fields are provided and valid.',
         ],
         error: 'Bad Request',
         statusCode: 400,
