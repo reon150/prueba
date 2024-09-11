@@ -1,1 +1,1 @@
-export * from './pagination-and-sort-request.dto';
+export * from './pagination-request.dto';

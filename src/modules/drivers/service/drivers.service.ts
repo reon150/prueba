@@ -19,6 +19,7 @@ export class DriversService {
     const [data, total] = await this.driversRepository.findAndCount({
       skip: (query.page - 1) * query.limit,
       take: query.limit,
+      order: query.sortBy ? { [query.sortBy]: query.sortOrder || 'ASC' } : {},
     });
 
     const basePath = 'drivers';

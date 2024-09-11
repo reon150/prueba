@@ -1,7 +1,11 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { DriversService } from '../service/drivers.service';
-import { ApiPaginatedResponse, PaginationResponseDto } from 'src/common';
+import {
+  ApiBadRequestResponse,
+  ApiPaginatedResponse,
+  PaginationResponseDto,
+} from 'src/common';
 import { GetDriversRequestDto, GetDriversResponseDto } from '../dto';
 
 @ApiTags('drivers')
@@ -22,10 +26,12 @@ export class DriversController {
     description: 'Query parameters for filtering and pagination',
   })
   @ApiPaginatedResponse(GetDriversResponseDto)
+  @ApiBadRequestResponse()
   async findAll(
     @Query() query: GetDriversRequestDto,
   ): Promise<PaginationResponseDto<GetDriversResponseDto>> {
     //TODO: Add a constant limit for eveything
+    //TODO: Add mapper for DTOs
     return this.driversService.findAll(query);
   }
 }

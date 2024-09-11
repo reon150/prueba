@@ -55,4 +55,12 @@ export class GetDriversResponseDto {
     required: false,
   })
   locationLongitude: number;
+
+  @ApiProperty({
+    description: 'Timestamp of when the driver was added to the system.',
+    example: '2023-09-10T12:00:00Z',
+    type: 'string',
+    format: 'date-time',
+  })
+  createdAt: Date;
 }
