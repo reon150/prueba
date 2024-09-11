@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getLimitValue, PaginationResponseDto } from 'src/common';
+import { getLimitValue, PaginationResponseDto, SortOrder } from 'src/common';
 import { Repository } from 'typeorm';
 import { Passenger } from '../entities/passenger.entity';
 import {
@@ -38,7 +38,9 @@ export class PassengersService {
     const [data, total] = await this.passengersRepository.findAndCount({
       skip: (query.page - 1) * query.limit,
       take: query.limit,
-      order: query.sortBy ? { [query.sortBy]: query.sortOrder || 'ASC' } : {}, // TODO: Use enum instead of ASC
+      order: query.sortBy
+        ? { [query.sortBy]: query.sortOrder || SortOrder.ASC }
+        : {},
     });
 
     const basePath = 'passengers';

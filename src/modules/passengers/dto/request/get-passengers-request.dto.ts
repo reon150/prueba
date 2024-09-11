@@ -1,17 +1,11 @@
 import { IsOptional, IsEnum } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { PaginationRequestDto } from 'src/common';
+import { PaginationRequestDto, SortOrder } from 'src/common';
 
 export enum PassengerSortBy {
   name = 'name',
   email = 'email',
   createdAt = 'createdAt',
-}
-
-//TODO: Put SortOrder enum in common
-export enum SortOrder {
-  ASC = 'ASC',
-  DESC = 'DESC',
 }
 
 export class GetPassengersRequestDto extends PaginationRequestDto {
