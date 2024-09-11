@@ -3,8 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationResponseDto } from 'src/common';
 import { Repository } from 'typeorm';
 import { Driver } from '../entities/driver.entity';
-import { GetDriversResponseDto } from '../dto';
-import { GetDriversRequestDto } from '../dto/request/get-drivers-request.dto';
+import { GetDriversRequestDto, GetDriversResponseDto } from '../dto';
 
 @Injectable()
 export class DriversService {
