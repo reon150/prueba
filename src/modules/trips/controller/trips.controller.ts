@@ -1,6 +1,6 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { CreateTripRequestDto } from '../dto';
+import { CreateTripRequestDto, UpdateTripRequestDto } from '../dto';
 import { Trip } from '../entities';
 import { TripsService } from '../service/Trips.service';
 
@@ -16,5 +16,15 @@ export class TripsController {
   ): Promise<Trip> {
     //TODO: Create response dto
     return this.tripsService.create(createTripRequestDto);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update trip details' })
+  async updateTrip(
+    @Param('id') id: string,
+    @Body() updateTripRequestDto: UpdateTripRequestDto,
+  ): Promise<Trip> {
+    //TODO: Create response dto
+    return this.tripsService.update(id, updateTripRequestDto);
   }
 }
