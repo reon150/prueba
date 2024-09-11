@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationResponseDto } from 'src/common';
 import { Repository } from 'typeorm';
 import { Driver } from '../entities/driver.entity';
+import { GetDriversResponseDto } from '../dto';
+import { GetDriversRequestDto } from '../dto/request/get-drivers-request.dto';
 
 @Injectable()
 export class DriversService {
@@ -12,15 +14,20 @@ export class DriversService {
   ) {}
 
   async findAll(
-    page: number,
-    limit: number,
-  ): Promise<PaginationResponseDto<Driver>> {
+    query: GetDriversRequestDto,
+  ): Promise<PaginationResponseDto<GetDriversResponseDto>> {
     const [data, total] = await this.driversRepository.findAndCount({
-      skip: (page - 1) * limit,
-      take: limit,
+      skip: (query.page - 1) * query.limit,
+      take: query.limit,
     });
 
     const basePath = 'drivers';
-    return new PaginationResponseDto(data, total, page, limit, basePath);
+    return new PaginationResponseDto(
+      data,
+      total,
+      query.page,
+      query.limit,
+      basePath,
+    );
   }
 }
