@@ -9,7 +9,8 @@ export class CreatePassengersTable1725987933064 implements MigrationInterface {
           email VARCHAR NOT NULL UNIQUE,
           phone_number VARCHAR NOT NULL UNIQUE,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
-          updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+          deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
       );
     `);
   }

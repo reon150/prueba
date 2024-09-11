@@ -13,7 +13,8 @@ export class CreateInvoicesTable1725987933066 implements MigrationInterface {
           amount DECIMAL NOT NULL,
           payment_status "payment_status_enum" NOT NULL,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
-          updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+          deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
       );
     `);
   }

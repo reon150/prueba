@@ -13,7 +13,8 @@ export class CreateDriversTable1725987933063 implements MigrationInterface {
           location_latitude DOUBLE PRECISION,
           location_longitude DOUBLE PRECISION,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
-          updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+          deleted_at TIMESTAMP WITH TIME ZONE DEFAULT NULL
       );
     `);
   }

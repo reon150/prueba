@@ -1,8 +1,9 @@
+import { BaseEntity } from 'src/common';
 import { Trip } from 'src/modules/trips/entities';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity({ name: 'drivers' })
-export class Driver {
+export class Driver extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -34,20 +35,6 @@ export class Driver {
     nullable: true,
   })
   locationLongitude: number;
-
-  @Column({
-    name: 'created_at',
-    type: 'timestamp with time zone',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  createdAt: Date;
-
-  @Column({
-    name: 'updated_at',
-    type: 'timestamp with time zone',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  updatedAt: Date;
 
   @OneToMany(() => Trip, (trip) => trip.driver)
   trips: Trip[];

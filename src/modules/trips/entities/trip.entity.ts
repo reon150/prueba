@@ -8,9 +8,10 @@ import {
 import { TripStatus } from '../enums';
 import { Passenger } from 'src/modules/passengers/entities';
 import { Driver } from 'src/modules/drivers/entities';
+import { BaseEntity } from 'src/common';
 
 @Entity({ name: 'trips' })
-export class Trip {
+export class Trip extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
