@@ -29,8 +29,6 @@ export class DriversController {
   async findAll(
     @Query() query: GetDriversRequestDto,
   ): Promise<PaginationResponseDto<GetDriversResponseDto>> {
-    //TODO: Add a constant limit for eveything
-    //TODO: Add mapper for DTOs
     return this.driversService.findAll(query);
   }
 

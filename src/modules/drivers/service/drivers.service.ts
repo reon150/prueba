@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaginationResponseDto } from 'src/common';
+import { getLimitValue, PaginationResponseDto } from 'src/common';
 import { Repository } from 'typeorm';
 import { Driver } from '../entities/driver.entity';
 import {
@@ -9,6 +9,7 @@ import {
   GetNearbyDriversRequestDto,
   GetNearbyDriversResponseDto,
 } from '../dto';
+import { DriverToDtoMapper } from '../mappers';
 
 @Injectable()
 export class DriversService {
@@ -20,6 +21,8 @@ export class DriversService {
   async findAll(
     query: GetDriversRequestDto,
   ): Promise<PaginationResponseDto<GetDriversResponseDto>> {
+    query.limit = getLimitValue(query.limit);
+
     const [data, total] = await this.driversRepository.findAndCount({
       skip: (query.page - 1) * query.limit,
       take: query.limit,
@@ -27,8 +30,10 @@ export class DriversService {
     });
 
     const basePath = 'drivers';
+    const drivers = DriverToDtoMapper.toGetDriversResponseDto(data);
+
     return new PaginationResponseDto(
-      data,
+      drivers,
       total,
       query.page,
       query.limit,
@@ -87,15 +92,6 @@ export class DriversService {
 
     const drivers = await queryBuilder.getRawMany();
 
-    // TODO: Usea a mapper
-    return drivers.map((driver) => ({
-      id: driver.id,
-      name: driver.name,
-      licenseNumber: driver.licenseNumber,
-      phoneNumber: driver.phoneNumber,
-      locationLatitude: driver.locationLatitude,
-      locationLongitude: driver.locationLongitude,
-      distance: driver.distance,
-    }));
+    return DriverToDtoMapper.toGetNearbyDriversResponseDto(drivers);
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PaginationResponseDto } from 'src/common';
+import { getLimitValue, PaginationResponseDto } from 'src/common';
 import { Repository } from 'typeorm';
 import { Passenger } from '../entities/passenger.entity';
 import {
@@ -8,6 +8,7 @@ import {
   GetPassengersRequestDto,
   GetPassengerResponseDto,
 } from '../dto';
+import { PassengerToDtoMapper } from '../mappers';
 
 @Injectable()
 export class PassengersService {
@@ -25,22 +26,26 @@ export class PassengersService {
     if (!passenger) {
       throw new NotFoundException(`Passenger not found with ID: ${id}`);
     }
-    //TODO: Add mapper
-    return passenger;
+
+    return PassengerToDtoMapper.toGetPassengerResponseDto(passenger);
   }
 
   async findAll(
     query: GetPassengersRequestDto,
   ): Promise<PaginationResponseDto<GetPassengersResponseDto>> {
+    query.limit = getLimitValue(query.limit);
+
     const [data, total] = await this.passengersRepository.findAndCount({
-      skip: (query.page - 1) * query.limit, //TODO: Add limit for limit
+      skip: (query.page - 1) * query.limit,
       take: query.limit,
       order: query.sortBy ? { [query.sortBy]: query.sortOrder || 'ASC' } : {}, // TODO: Use enum instead of ASC
     });
 
     const basePath = 'passengers';
+    const passengers = PassengerToDtoMapper.toGetPassengersResponseDto(data);
+
     return new PaginationResponseDto(
-      data,
+      passengers,
       total,
       query.page,
       query.limit,

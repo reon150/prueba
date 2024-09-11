@@ -53,7 +53,6 @@ export class PassengersController {
   async findAll(
     @Query() query: GetPassengersRequestDto,
   ): Promise<PaginationResponseDto<GetPassengersResponseDto>> {
-    //TODO: Implement a constant pagination limit
     //TODO: Implement DTO mapping
     return this.passengersService.findAll(query);
   }
