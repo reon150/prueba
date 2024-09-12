@@ -3,21 +3,21 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class GetNearbyDriversRequestDto {
   @ApiProperty({
-    example: 40.7128,
+    example: 18.486058,
     description: 'Latitude of the location to find nearby drivers.',
   })
   @IsNumber()
   latitude: number;
 
   @ApiProperty({
-    example: -74.006,
+    example: -69.931212,
     description: 'Longitude of the location to find nearby drivers.',
   })
   @IsNumber()
   longitude: number;
 
   @ApiProperty({
-    example: 5,
+    example: 10,
     description:
       'Radius in kilometers within which to search for nearby drivers. Optional.',
     required: false,

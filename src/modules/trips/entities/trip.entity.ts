@@ -16,12 +16,15 @@ export class Trip extends BaseEntity {
   id: string;
 
   @Column({ name: 'driver_id', type: 'uuid' })
+  @JoinColumn({ name: 'driver_id' })
   driverId: string;
 
   @ManyToOne(() => Driver, (driver) => driver.trips)
+  @JoinColumn({ name: 'driver_id' })
   driver: Driver;
 
   @Column({ name: 'passenger_id', type: 'uuid' })
+  @JoinColumn({ name: 'passenger_id' })
   passengerId: string;
 
   @ManyToOne(() => Passenger, (passenger) => passenger.trips)
