@@ -22,7 +22,11 @@ import {
   UpdateTripResponseDto,
 } from '../dto';
 import { TripsService } from '../service/Trips.service';
-import { ApiPaginatedResponse, PaginationResponseDto } from 'src/common';
+import {
+  ApiPaginatedResponse,
+  PaginationResponseDto,
+  UUIDValidationPipe,
+} from 'src/common';
 
 @ApiTags('trips')
 @Controller('trips')
@@ -62,7 +66,7 @@ export class TripsController {
   @ApiOperation({ summary: 'Update trip details' })
   @ApiNotFoundResponse({ description: 'Trip not found' })
   async updateTrip(
-    @Param('id') id: string,
+    @Param('id', UUIDValidationPipe) id: string,
     @Body() updateTripRequestDto: UpdateTripRequestDto,
   ): Promise<UpdateTripResponseDto> {
     return this.tripsService.update(id, updateTripRequestDto);

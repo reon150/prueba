@@ -7,7 +7,11 @@ import {
   ApiBadRequestResponse,
 } from '@nestjs/swagger';
 import { PassengersService } from '../service/passengers.service';
-import { ApiPaginatedResponse, PaginationResponseDto } from 'src/common';
+import {
+  ApiPaginatedResponse,
+  PaginationResponseDto,
+  UUIDValidationPipe,
+} from 'src/common';
 import {
   GetPassengerResponseDto,
   GetPassengersRequestDto,
@@ -32,7 +36,9 @@ export class PassengersController {
   })
   @ApiBadRequestResponse({ description: 'Invalid ID supplied' })
   @ApiResponse({ status: 404, description: 'Passenger not found' })
-  async findOne(@Param('id') id: string): Promise<GetPassengerResponseDto> {
+  async findOne(
+    @Param('id', UUIDValidationPipe) id: string,
+  ): Promise<GetPassengerResponseDto> {
     return this.passengersService.findOne(id);
   }
 
