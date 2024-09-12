@@ -2,7 +2,6 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
-  ApiQuery,
   ApiResponse,
   ApiBadRequestResponse,
 } from '@nestjs/swagger';
@@ -47,12 +46,6 @@ export class PassengersController {
     summary: 'Retrieve a list of passengers',
     description:
       'Returns a paginated list of passengers, optionally filtered by criteria.',
-  })
-  @ApiQuery({
-    type: GetPassengersRequestDto,
-    name: 'query',
-    required: false,
-    description: 'Query parameters for filtering and pagination',
   })
   @ApiPaginatedResponse(GetPassengersResponseDto)
   @ApiBadRequestResponse()

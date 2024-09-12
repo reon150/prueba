@@ -10,7 +10,6 @@ import {
 import {
   ApiTags,
   ApiOperation,
-  ApiQuery,
   ApiBadRequestResponse,
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
@@ -38,12 +37,6 @@ export class TripsController {
     summary: 'Retrieve a list of trips',
     description:
       'Returns a paginated list of trips, optionally filtered by status, driver, or passenger.',
-  })
-  @ApiQuery({
-    type: GetTripsRequestDto,
-    name: 'query',
-    required: false,
-    description: 'Query parameters for filtering and pagination',
   })
   @ApiPaginatedResponse(GetTripsResponseDto)
   @ApiBadRequestResponse()
