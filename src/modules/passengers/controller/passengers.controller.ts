@@ -6,16 +6,17 @@ import {
   ApiBadRequestResponse,
 } from '@nestjs/swagger';
 import { PassengersService } from '../service/passengers.service';
-import {
-  ApiPaginatedResponse,
-  PaginationResponseDto,
-  UUIDValidationPipe,
-} from 'src/common';
+
 import {
   GetPassengerResponseDto,
   GetPassengersRequestDto,
   GetPassengersResponseDto,
 } from '../dto';
+import {
+  ApiPaginatedResponse,
+  PaginationResponseDto,
+  UUIDValidationPipe,
+} from '../../../common';
 
 @ApiTags('passengers')
 @Controller('passengers')

@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getLimitValue, PaginationResponseDto, SortOrder } from 'src/common';
 import { Repository } from 'typeorm';
 import { Passenger } from '../entities/passenger.entity';
 import {
@@ -9,6 +8,11 @@ import {
   GetPassengerResponseDto,
 } from '../dto';
 import { PassengerToDtoMapper } from '../mappers';
+import {
+  getLimitValue,
+  PaginationResponseDto,
+  SortOrder,
+} from '../../../common';
 
 @Injectable()
 export class PassengersService {

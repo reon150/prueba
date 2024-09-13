@@ -16,12 +16,12 @@ import {
   UpdateTripResponseDto,
 } from '../dto';
 import { Trip } from '../entities';
-import { getLimitValue, PaginationResponseDto } from 'src/common';
 import { InvoiceToDtoMapper, TripToDtoMapper } from '../mappers';
-import { InvoicesService } from 'src/modules/invoices/service/Invoices.service';
 import { TripStatus } from '../enums';
-import { DriversService } from 'src/modules/drivers/service/drivers.service';
-import { PassengersService } from 'src/modules/passengers/service/passengers.service';
+import { DriversService } from '../../drivers/service/drivers.service';
+import { InvoicesService } from '../../invoices/service/Invoices.service';
+import { PassengersService } from '../../passengers/service/passengers.service';
+import { getLimitValue, PaginationResponseDto } from '../../../common';
 
 @Injectable()
 export class TripsService {

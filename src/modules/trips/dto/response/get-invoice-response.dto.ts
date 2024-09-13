@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PaymentStatus } from 'src/modules/invoices/enums';
+import { PaymentStatus } from '../../../invoices/enums';
 
 export class GetInvoiceResponseDto {
   @ApiProperty({

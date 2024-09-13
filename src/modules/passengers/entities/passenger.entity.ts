@@ -1,6 +1,6 @@
-import { BaseEntity } from 'src/common';
-import { Trip } from 'src/modules/trips/entities';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { BaseEntity } from '../../../common';
+import { Trip } from '../../trips/entities';
 
 @Entity({ name: 'passengers' })
 export class Passenger extends BaseEntity {

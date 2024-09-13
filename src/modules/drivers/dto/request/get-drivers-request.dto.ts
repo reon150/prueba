@@ -1,7 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
-import { PaginationRequestDto } from 'src/common';
+import { PaginationRequestDto } from '../../../../common';
 
 enum DriverSortByEnum {
   id = 'id',

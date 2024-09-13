@@ -6,11 +6,7 @@ import {
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import { DriversService } from '../service/drivers.service';
-import {
-  ApiBadRequestResponse,
-  ApiPaginatedResponse,
-  PaginationResponseDto,
-} from 'src/common';
+
 import {
   GetDriverResponseDto,
   GetDriversRequestDto,
@@ -18,6 +14,11 @@ import {
   GetNearbyDriversRequestDto,
   GetNearbyDriversResponseDto,
 } from '../dto';
+import {
+  ApiBadRequestResponse,
+  ApiPaginatedResponse,
+  PaginationResponseDto,
+} from '../../../common';
 
 @ApiTags('drivers')
 @Controller('drivers')

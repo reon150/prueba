@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PaymentStatus } from '../enums';
 import { Invoice } from '../entities';
-import { Trip } from 'src/modules/trips/entities';
-import { calculateAngularDistance } from 'src/common';
-import { AppConfigService } from 'src/config';
+import { AppConfigService } from '../../../config';
+import { Trip } from '../../trips/entities';
+import { calculateAngularDistance } from '../../../common';
 
 @Injectable()
 export class InvoicesService {

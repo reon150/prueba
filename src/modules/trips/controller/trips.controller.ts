@@ -28,7 +28,7 @@ import {
   ApiPaginatedResponse,
   PaginationResponseDto,
   UUIDValidationPipe,
-} from 'src/common';
+} from '../../../common';
 
 @ApiTags('trips')
 @Controller('trips')

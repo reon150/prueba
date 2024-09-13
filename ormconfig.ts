@@ -1,6 +1,6 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { AppConfigService } from 'src/config';
 import { DataSource, DataSourceOptions, LoggerOptions } from 'typeorm';
+import { AppConfigService } from './src/config';
 
 const appConfigService = AppConfigService.create();
 

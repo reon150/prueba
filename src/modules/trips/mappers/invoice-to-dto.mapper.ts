@@ -1,4 +1,4 @@
-import { Invoice } from 'src/modules/invoices/entities';
+import { Invoice } from '../../invoices/entities';
 import { GetInvoiceResponseDto } from '../dto';
 
 export class InvoiceToDtoMapper {

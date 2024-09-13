@@ -6,9 +6,9 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { TripStatus } from '../enums';
-import { Passenger } from 'src/modules/passengers/entities';
-import { Driver } from 'src/modules/drivers/entities';
-import { BaseEntity } from 'src/common';
+import { Driver } from '../../drivers/entities';
+import { BaseEntity } from '../../../common';
+import { Passenger } from '../../passengers/entities';
 
 @Entity({ name: 'trips' })
 export class Trip extends BaseEntity {

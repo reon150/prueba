@@ -6,8 +6,8 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { PaymentStatus } from '../enums';
-import { Trip } from 'src/modules/trips/entities';
-import { BaseEntity } from 'src/common';
+import { BaseEntity } from '../../../common';
+import { Trip } from '../../trips/entities';
 
 @Entity({ name: 'invoices' })
 export class Invoice extends BaseEntity {

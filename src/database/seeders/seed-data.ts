@@ -1,13 +1,13 @@
 import { DataSource, Repository } from 'typeorm';
 import { AppModule } from '../../app.module';
 import { NestFactory } from '@nestjs/core';
-import { Driver } from 'src/modules/drivers/entities';
-import { Passenger } from 'src/modules/passengers/entities';
-import { Trip } from 'src/modules/trips/entities';
+import { Driver } from '../../modules/drivers/entities';
+import { Passenger } from '../../modules/passengers/entities';
+import { Invoice } from '../../modules/invoices/entities';
+import { Trip } from '../../modules/trips/entities';
+import { TripStatus } from '../../modules/trips/enums';
+import { PaymentStatus } from '../../modules/invoices/enums';
 import { faker } from '@faker-js/faker';
-import { TripStatus } from 'src/modules/trips/enums';
-import { Invoice } from 'src/modules/invoices/entities';
-import { PaymentStatus } from 'src/modules/invoices/enums';
 
 async function runSeeder() {
   const app = await NestFactory.create(AppModule);

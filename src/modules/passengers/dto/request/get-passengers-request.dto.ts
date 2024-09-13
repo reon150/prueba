@@ -1,6 +1,6 @@
 import { IsOptional, IsEnum } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { PaginationRequestDto, SortOrder } from 'src/common';
+import { PaginationRequestDto, SortOrder } from '../../../../common';
 
 export enum PassengerSortBy {
   name = 'name',

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getLimitValue, PaginationResponseDto } from 'src/common';
+import { getLimitValue, PaginationResponseDto } from '../../../common';
 import { Repository } from 'typeorm';
 import { Driver } from '../entities/driver.entity';
 import {
