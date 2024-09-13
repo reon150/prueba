@@ -16,11 +16,12 @@ export class GetDriversRequestDto extends PaginationRequestDto {
   @ApiPropertyOptional({
     description: 'Filter for whether a driver is available',
     type: Boolean,
+    example: true,
   })
   @IsBoolean()
   @IsOptional()
-  @Transform(({ value }) => value === 'true')
-  isAvailable?: boolean; //TODO: Fix this
+  @Transform(({ obj }) => obj.isAvailable === 'true')
+  isAvailable?: boolean;
 
   @ApiPropertyOptional({
     description: 'Field to sort by',

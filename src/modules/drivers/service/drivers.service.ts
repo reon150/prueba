@@ -23,11 +23,19 @@ export class DriversService {
   ): Promise<PaginationResponseDto<GetDriversResponseDto>> {
     query.limit = getLimitValue(query.limit);
 
-    const [data, total] = await this.driversRepository.findAndCount({
+    const findOptions = {
       skip: (query.page - 1) * query.limit,
       take: query.limit,
+      where: {} as any,
       order: query.sortBy ? { [query.sortBy]: query.sortOrder || 'ASC' } : {},
-    });
+    };
+
+    if (query.isAvailable !== undefined) {
+      findOptions.where.isAvailable = query.isAvailable;
+    }
+
+    const [data, total] =
+      await this.driversRepository.findAndCount(findOptions);
 
     const basePath = 'drivers';
     const drivers = DriverToDtoMapper.toGetDriversResponseDto(data);
