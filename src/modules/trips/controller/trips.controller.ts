@@ -15,6 +15,7 @@ import {
 } from '@nestjs/swagger';
 import {
   CreateTripRequestDto,
+  GetInvoiceResponseDto,
   GetTripsRequestDto,
   GetTripsResponseDto,
   UpdateTripRequestDto,
@@ -46,10 +47,9 @@ export class TripsController {
     return this.tripsService.findAll(query);
   }
 
-  //TODO: Add documentation for swagger
   @Post()
   @ApiOperation({ summary: 'Create a new trip' })
-  async createTrip(
+  async create(
     @Body() createTripRequestDto: CreateTripRequestDto,
   ): Promise<CreateTripRequestDto> {
     return this.tripsService.create(createTripRequestDto);
@@ -58,10 +58,22 @@ export class TripsController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update trip details' })
   @ApiNotFoundResponse({ description: 'Trip not found' })
-  async updateTrip(
+  async update(
     @Param('id', UUIDValidationPipe) id: string,
     @Body() updateTripRequestDto: UpdateTripRequestDto,
   ): Promise<UpdateTripResponseDto> {
     return this.tripsService.update(id, updateTripRequestDto);
+  }
+
+  @Get(':tripId/invoice')
+  @ApiOperation({
+    summary: 'Retrieve an invoice by trip ID',
+    description: 'Fetches the invoice associated with the given trip ID.',
+  })
+  @ApiNotFoundResponse({ description: 'Invoice not found' })
+  async getInvoiceByTripId(
+    @Param('tripId', UUIDValidationPipe) tripId: string,
+  ): Promise<GetInvoiceResponseDto> {
+    return this.tripsService.findInvoiceByTripId(tripId);
   }
 }

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
   CreateTripRequestDto,
+  GetInvoiceResponseDto,
   GetTripsRequestDto,
   GetTripsResponseDto,
   UpdateTripRequestDto,
@@ -10,14 +11,14 @@ import {
 } from '../dto';
 import { Trip } from '../entities';
 import { getLimitValue, PaginationResponseDto } from 'src/common';
-import { TripToDtoMapper } from '../mappers';
+import { InvoiceToDtoMapper, TripToDtoMapper } from '../mappers';
 import { InvoicesService } from 'src/modules/invoices/service/Invoices.service';
 
 @Injectable()
 export class TripsService {
   constructor(
-    @InjectRepository(Trip) private readonly tripRepository: Repository<Trip>,
-    private readonly invoiceService: InvoicesService,
+    @InjectRepository(Trip) private readonly tripsRepository: Repository<Trip>,
+    private readonly invoicesService: InvoicesService,
   ) {}
 
   async findAll(
@@ -27,7 +28,7 @@ export class TripsService {
 
     const { driverId, passengerId, status, page, limit } = query;
 
-    const qb = this.tripRepository
+    const qb = this.tripsRepository
       .createQueryBuilder('trip')
       .leftJoinAndSelect('trip.driver', 'driver')
       .leftJoinAndSelect('trip.passenger', 'passenger');
@@ -63,9 +64,9 @@ export class TripsService {
   async create(
     createTripRequestDto: CreateTripRequestDto,
   ): Promise<CreateTripRequestDto> {
-    const trip = this.tripRepository.create(createTripRequestDto);
+    const trip = this.tripsRepository.create(createTripRequestDto);
 
-    const tripSaved = await this.tripRepository.save(trip);
+    const tripSaved = await this.tripsRepository.save(trip);
 
     return TripToDtoMapper.toCreateTripResponseDto(tripSaved);
   }
@@ -74,7 +75,7 @@ export class TripsService {
     id: string,
     updateTripRequestDto: UpdateTripRequestDto,
   ): Promise<UpdateTripResponseDto> {
-    const trip = await this.tripRepository.findOne({ where: { id } });
+    const trip = await this.tripsRepository.findOne({ where: { id } });
 
     if (!trip) {
       throw new NotFoundException(`Trip with ID ${id} not found`);
@@ -82,8 +83,20 @@ export class TripsService {
 
     Object.assign(trip, updateTripRequestDto);
 
-    const tripSaved = await this.tripRepository.save(trip);
+    const tripSaved = await this.tripsRepository.save(trip);
 
     return TripToDtoMapper.toUpdateTripResponseDto(tripSaved);
+  }
+
+  async findInvoiceByTripId(
+    tripId: string,
+  ): Promise<GetInvoiceResponseDto | null> {
+    const invoice = await this.invoicesService.findOneByTripId(tripId);
+
+    if (!invoice) {
+      throw new NotFoundException('Invoice not found');
+    }
+
+    return InvoiceToDtoMapper.toGetInvoiceResponseDto(invoice);
   }
 }

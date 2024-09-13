@@ -1,1 +1,2 @@
-export * from './trips-to-dto.mapper';
+export * from './invoice-to-dto.mapper';
+export * from './trip-to-dto.mapper';
