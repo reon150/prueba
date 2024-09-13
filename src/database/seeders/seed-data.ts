@@ -40,7 +40,7 @@ async function seedData(dataSource: DataSource): Promise<void> {
       return driversRepository.create({
         name: faker.person.fullName(),
         email: faker.internet.email(),
-        phoneNumber: faker.phone.number(),
+        phoneNumber: faker.phone.number({ style: 'international' }),
         licenseNumber: faker.vehicle.vrm(),
         isAvailable: faker.datatype.boolean(),
         locationLatitude,
@@ -56,89 +56,86 @@ async function seedData(dataSource: DataSource): Promise<void> {
       passengersRepository.create({
         name: faker.person.fullName(),
         email: faker.internet.email(),
-        phoneNumber: faker.phone.number(),
+        phoneNumber: faker.phone.number({ style: 'international' }),
       }),
     );
   passengers = await passengersRepository.save(passengers);
 
   // Create trips
   let trips: Trip[] = [];
-  trips = Array(5723)
-    .fill(null)
-    .map(() => {
-      let selectedDriver: Driver;
-      let selectedPassenger: Passenger;
+  let noEligiblePassengersOrDrivers = false;
+  for (let i = 0; i < 5723; i++) {
+    let selectedPassenger: Passenger;
+    let selectedDriver: Driver;
+    let status: TripStatus;
 
-      // Select the trip status first
-      const status = faker.helpers.arrayElement(Object.values(TripStatus));
+    if (!noEligiblePassengersOrDrivers) {
+      status = TripStatus.Active;
 
-      // If the trip status is 'Active', select an available driver not already on an active trip
-      if (status === TripStatus.Active) {
-        do {
-          selectedDriver = faker.helpers.arrayElement(drivers);
-        } while (
-          !selectedDriver.isAvailable ||
-          trips.some(
+      const availableDrivers = drivers.filter(
+        (driver) =>
+          driver.isAvailable &&
+          !trips.some(
             (trip) =>
-              trip.driver === selectedDriver &&
-              trip.status === TripStatus.Active,
-          )
-        );
-      } else {
-        selectedDriver = faker.helpers.arrayElement(drivers);
-      }
+              trip.driver.id === driver.id && trip.status === TripStatus.Active,
+          ),
+      );
 
-      // Ensure the passenger is not currently on an active trip
-      if (status === TripStatus.Active) {
-        do {
-          selectedPassenger = faker.helpers.arrayElement(passengers);
-        } while (
-          trips.some(
+      const eligiblePassengers = passengers.filter(
+        (passenger) =>
+          !trips.some(
             (trip) =>
-              trip.passenger === selectedPassenger &&
+              trip.passenger.id === passenger.id &&
               trip.status === TripStatus.Active,
-          )
-        );
-      } else {
-        selectedPassenger = faker.helpers.arrayElement(passengers);
+          ),
+      );
+
+      selectedDriver = faker.helpers.arrayElement(availableDrivers);
+      selectedPassenger = faker.helpers.arrayElement(eligiblePassengers);
+
+      if (availableDrivers.length === 1 || eligiblePassengers.length === 1) {
+        noEligiblePassengersOrDrivers = true;
       }
+    } else {
+      status = TripStatus.Completed;
+      selectedDriver = faker.helpers.arrayElement(drivers);
+      selectedPassenger = faker.helpers.arrayElement(passengers);
+    }
 
-      const [startLatitude, startLongitude] =
-        faker.location.nearbyGPSCoordinate({
-          origin: [
-            selectedDriver.locationLatitude,
-            selectedDriver.locationLongitude,
-          ],
-          radius: 10,
-          isMetric: true,
-        });
-
-      const trip: Partial<Trip> = {
-        driver: selectedDriver,
-        passenger: selectedPassenger,
-        startLatitude,
-        startLongitude,
-        startTime: faker.date.recent(),
-        status,
-        endLatitude: null,
-        endLongitude: null,
-        endTime: null,
-      };
-
-      // If the status is 'Completed', add end location and end time
-      if (status === TripStatus.Completed) {
-        const [endLatitude, endLongitude] = faker.location.nearbyGPSCoordinate({
-          origin: [startLatitude, startLongitude],
-          radius: 10,
-          isMetric: true,
-        });
-        trip.endLatitude = endLatitude;
-        trip.endLongitude = endLongitude;
-        trip.endTime = faker.date.future();
-      }
-
-      return tripsRepository.create(trip);
+    const [startLatitude, startLongitude] = faker.location.nearbyGPSCoordinate({
+      origin: [
+        selectedDriver.locationLatitude,
+        selectedDriver.locationLongitude,
+      ],
+      radius: 10,
+      isMetric: true,
     });
+
+    const trip = {
+      driver: selectedDriver,
+      passenger: selectedPassenger,
+      startLatitude,
+      startLongitude,
+      startTime: faker.date.recent(),
+      status,
+      endLatitude: null,
+      endLongitude: null,
+      endTime: null,
+    };
+
+    if (status === TripStatus.Completed) {
+      const [endLatitude, endLongitude] = faker.location.nearbyGPSCoordinate({
+        origin: [startLatitude, startLongitude],
+        radius: 10,
+        isMetric: true,
+      });
+      trip.endLatitude = endLatitude;
+      trip.endLongitude = endLongitude;
+      trip.endTime = faker.date.future();
+    }
+
+    trips.push(tripsRepository.create(trip));
+  }
   trips = await tripsRepository.save(trips);
 
   const invoices: Invoice[] = trips
