@@ -21,9 +21,13 @@ export class Invoice extends BaseEntity {
   @JoinColumn({ name: 'trip_id' })
   trip: Trip;
 
-  @Column()
+  @Column({ name: 'amount', type: 'decimal', precision: 10, scale: 2 })
   amount: number;
 
-  @Column({ type: 'enum', enum: PaymentStatus })
+  @Column({
+    name: 'payment_status',
+    type: 'enum',
+    enum: PaymentStatus,
+  })
   paymentStatus: PaymentStatus;
 }

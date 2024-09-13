@@ -6,6 +6,8 @@ import { Passenger } from 'src/modules/passengers/entities';
 import { Trip } from 'src/modules/trips/entities';
 import { faker } from '@faker-js/faker';
 import { TripStatus } from 'src/modules/trips/enums';
+import { Invoice } from 'src/modules/invoices/entities';
+import { PaymentStatus } from 'src/modules/invoices/enums';
 
 async function runSeeder() {
   const app = await NestFactory.create(AppModule);
@@ -20,6 +22,8 @@ async function seedData(dataSource: DataSource): Promise<void> {
   const passengersRepository: Repository<Passenger> =
     dataSource.getRepository(Passenger);
   const tripsRepository: Repository<Trip> = dataSource.getRepository(Trip);
+  const invoicesRepository: Repository<Invoice> =
+    dataSource.getRepository(Invoice);
 
   const santoDomingoCenter: [number, number] = [18.486058, -69.931212];
 
@@ -58,7 +62,8 @@ async function seedData(dataSource: DataSource): Promise<void> {
   passengers = await passengersRepository.save(passengers);
 
   // Create trips
-  const trips = Array(5723)
+  let trips: Trip[] = [];
+  trips = Array(5723)
     .fill(null)
     .map(() => {
       let selectedDriver: Driver;
@@ -94,6 +99,8 @@ async function seedData(dataSource: DataSource): Promise<void> {
               trip.status === TripStatus.Active,
           )
         );
+      } else {
+        selectedPassenger = faker.helpers.arrayElement(passengers);
       }
 
       const [startLatitude, startLongitude] =
@@ -106,7 +113,7 @@ async function seedData(dataSource: DataSource): Promise<void> {
           isMetric: true,
         });
 
-      const tripDetails: Partial<Trip> = {
+      const trip: Partial<Trip> = {
         driver: selectedDriver,
         passenger: selectedPassenger,
         startLatitude,
@@ -125,18 +132,27 @@ async function seedData(dataSource: DataSource): Promise<void> {
           radius: 10,
           isMetric: true,
         });
-        tripDetails.endLatitude = endLatitude;
-        tripDetails.endLongitude = endLongitude;
-        tripDetails.endTime = faker.date.future();
+        trip.endLatitude = endLatitude;
+        trip.endLongitude = endLongitude;
+        trip.endTime = faker.date.future();
       }
 
-      return tripsRepository.create(tripDetails);
+      return tripsRepository.create(trip);
     });
+  trips = await tripsRepository.save(trips);
 
-  // Save all entities to the database
-  await driversRepository.save(drivers);
-  await passengersRepository.save(passengers);
-  await tripsRepository.save(trips);
+  const invoices: Invoice[] = trips
+    .filter((trip) => trip.status === TripStatus.Completed)
+    .map((trip) => {
+      return invoicesRepository.create({
+        trip,
+        amount: parseFloat(
+          faker.finance.amount({ min: 100, max: 2000, dec: 2 }),
+        ),
+        paymentStatus: faker.helpers.arrayElement(Object.values(PaymentStatus)),
+      });
+    });
+  await invoicesRepository.save(invoices);
 }
 
 runSeeder();

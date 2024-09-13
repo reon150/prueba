@@ -11,24 +11,24 @@ import { AppConfigService } from 'src/config';
 export class InvoicesService {
   constructor(
     @InjectRepository(Invoice)
-    private readonly invoiceRepository: Repository<Invoice>,
+    private readonly invoicesRepository: Repository<Invoice>,
     private readonly appConfigService: AppConfigService,
   ) {}
 
   findOneByTripId = async (tripId: string): Promise<Invoice | undefined> => {
-    return await this.invoiceRepository.findOne({ where: { tripId } });
+    return await this.invoicesRepository.findOne({ where: { tripId } });
   };
 
   create = async (trip: Trip): Promise<Invoice> => {
     const amount = this.calculateTripAmount(trip);
 
-    const invoice = this.invoiceRepository.create({
+    const invoice = this.invoicesRepository.create({
       tripId: trip.id,
       amount,
       paymentStatus: PaymentStatus.Processing,
     });
 
-    const savedInvoice = await this.invoiceRepository.save(invoice);
+    const savedInvoice = await this.invoicesRepository.save(invoice);
 
     this.processInvoice(savedInvoice);
 
@@ -63,7 +63,7 @@ export class InvoicesService {
       const random = Math.random();
       invoice.paymentStatus =
         random > 0.9 ? PaymentStatus.Unpaid : PaymentStatus.Paid; // 10% chance for unpaid
-      await this.invoiceRepository.save(invoice);
+      await this.invoicesRepository.save(invoice);
     }, delay);
   };
 }
