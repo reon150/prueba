@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-class GetPassengerTripDriverResponseDto {
+class GetDriverTripPassengerResponseDto {
   @ApiProperty({
     example: '123e4567-e89b-12d3-a456-426614174000',
     description: 'Unique identifier of the driver.',
@@ -14,7 +14,7 @@ class GetPassengerTripDriverResponseDto {
   name: string;
 }
 
-class GetPassengerTripResponseDto {
+class GetDriverTripResponseDto {
   @ApiProperty({
     example: '789e4567-e89b-12d3-a456-426614174000',
     description: 'Unique identifier of the trip.',
@@ -22,10 +22,10 @@ class GetPassengerTripResponseDto {
   id: string;
 
   @ApiProperty({
-    type: GetPassengerTripDriverResponseDto,
-    description: 'Driver associated with the trip.',
+    type: GetDriverTripPassengerResponseDto,
+    description: 'Passenger associated with the trip.',
   })
-  driver: GetPassengerTripDriverResponseDto;
+  passenger: GetDriverTripPassengerResponseDto;
 
   @ApiProperty({
     example: 40.712776,
@@ -68,34 +68,31 @@ class GetPassengerTripResponseDto {
   endTime: Date;
 }
 
-export class GetPassengerResponseDto {
-  @ApiProperty({
-    example: '123e4567-e89b-12d3-a456-426614174000',
-    description: 'Unique identifier of the passenger.',
-  })
+export class GetDriverResponseDto {
+  @ApiProperty({ example: '123e4567-e89b-12d3-a456-426614174000' })
   id: string;
 
-  @ApiProperty({
-    example: 'John Doe',
-    description: 'Name of the passenger.',
-  })
+  @ApiProperty({ example: 'John Doe' })
   name: string;
 
-  @ApiProperty({
-    example: 'john.doe@example.com',
-    description: 'Email address of the passenger.',
-  })
+  @ApiProperty({ example: 'DL1234567890' })
+  licenseNumber: string;
+
+  @ApiProperty({ example: 'johndoe@example.com' })
   email: string;
 
-  @ApiProperty({
-    example: '+1234567890',
-    description: 'Contact phone number of the passenger.',
-  })
+  @ApiProperty({ example: '+1234567890' })
   phoneNumber: string;
 
-  @ApiProperty({
-    type: [GetPassengerTripResponseDto],
-    description: 'List of trips associated with the passenger.',
-  })
-  trips: GetPassengerTripResponseDto[];
+  @ApiProperty({ example: true })
+  isAvailable: boolean;
+
+  @ApiProperty({ example: 40.712776 })
+  locationLatitude: number;
+
+  @ApiProperty({ example: -74.005974 })
+  locationLongitude: number;
+
+  @ApiProperty({ type: [GetDriverTripResponseDto] })
+  trips: GetDriverTripResponseDto[];
 }

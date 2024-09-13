@@ -1,5 +1,10 @@
-import { Controller, Get, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiNotFoundResponse,
+} from '@nestjs/swagger';
 import { DriversService } from '../service/drivers.service';
 import {
   ApiBadRequestResponse,
@@ -7,6 +12,7 @@ import {
   PaginationResponseDto,
 } from 'src/common';
 import {
+  GetDriverResponseDto,
   GetDriversRequestDto,
   GetDriversResponseDto,
   GetNearbyDriversRequestDto,
@@ -17,6 +23,17 @@ import {
 @Controller('drivers')
 export class DriversController {
   constructor(private readonly driversService: DriversService) {}
+
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Get a specific driver',
+    description:
+      'Retrieves detailed information about a specific driver, including all associated trips.',
+  })
+  @ApiNotFoundResponse({ description: 'Driver not found' })
+  async findOne(@Param('id') id: string): Promise<GetDriverResponseDto> {
+    return this.driversService.findOne(id);
+  }
 
   @Get()
   @ApiOperation({

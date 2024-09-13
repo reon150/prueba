@@ -1,9 +1,4 @@
-import {
-  GetPassengerResponseDto,
-  GetPassengersResponseDto,
-  TripDto,
-  DriverDto,
-} from '../dto';
+import { GetPassengerResponseDto, GetPassengersResponseDto } from '../dto';
 import { Passenger } from '../entities/passenger.entity';
 
 export class PassengerToDtoMapper {
@@ -20,14 +15,14 @@ export class PassengerToDtoMapper {
         driver: {
           id: trip.driver.id,
           name: trip.driver.name,
-        } as DriverDto,
+        },
         startLatitude: trip.startLatitude,
         startLongitude: trip.startLongitude,
         endLatitude: trip.endLatitude,
         endLongitude: trip.endLongitude,
         startTime: trip.startTime,
         endTime: trip.endTime,
-      })) as TripDto[],
+      })),
     };
   }
 

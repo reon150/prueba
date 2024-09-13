@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getLimitValue, PaginationResponseDto } from 'src/common';
 import { Repository } from 'typeorm';
 import { Driver } from '../entities/driver.entity';
 import {
+  GetDriverResponseDto,
   GetDriversRequestDto,
   GetDriversResponseDto,
   GetNearbyDriversRequestDto,
@@ -17,6 +18,19 @@ export class DriversService {
     @InjectRepository(Driver)
     private readonly driversRepository: Repository<Driver>,
   ) {}
+
+  async findOne(id: string): Promise<GetDriverResponseDto> {
+    const driver = await this.driversRepository.findOne({
+      where: { id },
+      relations: ['trips', 'trips.passenger'],
+    });
+
+    if (!driver) {
+      throw new NotFoundException(`Driver with ID ${id} not found`);
+    }
+
+    return DriverToDtoMapper.toGetDriverResponseDto(driver);
+  }
 
   async findAll(
     query: GetDriversRequestDto,
