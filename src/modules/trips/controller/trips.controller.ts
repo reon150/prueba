@@ -12,6 +12,7 @@ import {
   ApiOperation,
   ApiBadRequestResponse,
   ApiNotFoundResponse,
+  ApiConflictResponse,
 } from '@nestjs/swagger';
 import {
   CreateTripRequestDto,
@@ -58,6 +59,7 @@ export class TripsController {
   @Patch(':id')
   @ApiOperation({ summary: 'Update trip details' })
   @ApiNotFoundResponse({ description: 'Trip not found' })
+  @ApiConflictResponse({ description: 'Cannot modify a completed trip' })
   async update(
     @Param('id', UUIDValidationPipe) id: string,
     @Body() updateTripRequestDto: UpdateTripRequestDto,

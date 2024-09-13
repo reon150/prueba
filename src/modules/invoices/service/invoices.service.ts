@@ -63,8 +63,6 @@ export class InvoicesService {
       const random = Math.random();
       invoice.paymentStatus =
         random > 0.9 ? PaymentStatus.Unpaid : PaymentStatus.Paid; // 10% chance for unpaid
-      invoice.updatedAt = new Date();
-
       await this.invoiceRepository.save(invoice);
     }, delay);
   };

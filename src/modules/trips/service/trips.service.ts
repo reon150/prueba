@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
@@ -13,6 +17,7 @@ import { Trip } from '../entities';
 import { getLimitValue, PaginationResponseDto } from 'src/common';
 import { InvoiceToDtoMapper, TripToDtoMapper } from '../mappers';
 import { InvoicesService } from 'src/modules/invoices/service/Invoices.service';
+import { TripStatus } from '../enums';
 
 @Injectable()
 export class TripsService {
@@ -81,7 +86,15 @@ export class TripsService {
       throw new NotFoundException(`Trip with ID ${id} not found`);
     }
 
+    if (trip.status === TripStatus.Completed) {
+      throw new ConflictException('Completed trips cannot be modified');
+    }
+
     Object.assign(trip, updateTripRequestDto);
+
+    if (updateTripRequestDto.status === TripStatus.Completed) {
+      this.invoicesService.create(trip);
+    }
 
     const tripSaved = await this.tripsRepository.save(trip);
 
