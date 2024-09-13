@@ -3,7 +3,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 export class CreateTripsTable1725987933065 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TYPE "trip_status_enum" AS ENUM('active', 'completed')`,
+      `CREATE TYPE "trip_status_enum" AS ENUM('Active', 'Completed', 'Canceled')`,
     );
 
     await queryRunner.query(`
@@ -15,7 +15,7 @@ export class CreateTripsTable1725987933065 implements MigrationInterface {
           start_longitude DOUBLE PRECISION NOT NULL,
           end_latitude DOUBLE PRECISION,
           end_longitude DOUBLE PRECISION,
-          start_time TIMESTAMP WITH TIME ZONE,
+          start_time TIMESTAMP WITH TIME ZONE NOT NULL,
           end_time TIMESTAMP WITH TIME ZONE,
           status "trip_status_enum" NOT NULL,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,

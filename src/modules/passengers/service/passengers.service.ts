@@ -54,4 +54,11 @@ export class PassengersService {
       basePath,
     );
   }
+
+  async passengerExists(id: string): Promise<boolean> {
+    const passenger = await this.passengersRepository.findOne({
+      where: { id },
+    });
+    return !!passenger;
+  }
 }

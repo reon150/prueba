@@ -16,6 +16,7 @@ import {
 } from '@nestjs/swagger';
 import {
   CreateTripRequestDto,
+  CreateTripResponseDto,
   GetInvoiceResponseDto,
   GetTripsRequestDto,
   GetTripsResponseDto,
@@ -50,16 +51,26 @@ export class TripsController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new trip' })
+  @ApiBadRequestResponse({
+    description: 'Driver is not available or invalid data provided',
+  })
+  @ApiNotFoundResponse({
+    description: 'Driver or Passenger not found',
+  })
   async create(
     @Body() createTripRequestDto: CreateTripRequestDto,
-  ): Promise<CreateTripRequestDto> {
+  ): Promise<CreateTripResponseDto> {
     return this.tripsService.create(createTripRequestDto);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update trip details' })
-  @ApiNotFoundResponse({ description: 'Trip not found' })
+  @ApiNotFoundResponse({ description: 'Trip, driver, or passenger not found' })
   @ApiConflictResponse({ description: 'Cannot modify a completed trip' })
+  @ApiBadRequestResponse({
+    description:
+      'End time and coordinates must be provided for completed trips',
+  })
   async update(
     @Param('id', UUIDValidationPipe) id: string,
     @Body() updateTripRequestDto: UpdateTripRequestDto,

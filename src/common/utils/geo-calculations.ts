@@ -3,17 +3,23 @@ export const convertDegreesToRadians = (degrees: number): number =>
 
 // Calculate distance between two geo points using Haversine
 export const calculateAngularDistance = (
-  latitudeDifference: number,
-  longitudeDifference: number,
   startLatitude: number,
+  startLongitude: number,
   endLatitude: number,
+  endLongitude: number,
 ): number => {
+  const latitudeDifference = convertDegreesToRadians(
+    endLatitude - startLatitude,
+  );
+  const longitudeDifference = convertDegreesToRadians(
+    endLongitude - startLongitude,
+  );
+
   const haversineFormulaComponent =
-    Math.sin(latitudeDifference / 2) * Math.sin(latitudeDifference / 2) +
+    Math.sin(latitudeDifference / 2) ** 2 +
     Math.cos(convertDegreesToRadians(startLatitude)) *
       Math.cos(convertDegreesToRadians(endLatitude)) *
-      Math.sin(longitudeDifference / 2) *
-      Math.sin(longitudeDifference / 2);
+      Math.sin(longitudeDifference / 2) ** 2;
 
   return (
     2 *

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -7,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
   CreateTripRequestDto,
+  CreateTripResponseDto,
   GetInvoiceResponseDto,
   GetTripsRequestDto,
   GetTripsResponseDto,
@@ -18,12 +20,16 @@ import { getLimitValue, PaginationResponseDto } from 'src/common';
 import { InvoiceToDtoMapper, TripToDtoMapper } from '../mappers';
 import { InvoicesService } from 'src/modules/invoices/service/Invoices.service';
 import { TripStatus } from '../enums';
+import { DriversService } from 'src/modules/drivers/service/drivers.service';
+import { PassengersService } from 'src/modules/passengers/service/passengers.service';
 
 @Injectable()
 export class TripsService {
   constructor(
     @InjectRepository(Trip) private readonly tripsRepository: Repository<Trip>,
     private readonly invoicesService: InvoicesService,
+    private readonly driversService: DriversService,
+    private readonly passengersService: PassengersService,
   ) {}
 
   async findAll(
@@ -68,8 +74,11 @@ export class TripsService {
 
   async create(
     createTripRequestDto: CreateTripRequestDto,
-  ): Promise<CreateTripRequestDto> {
+  ): Promise<CreateTripResponseDto> {
+    await this.validateTripCreate(createTripRequestDto);
+
     const trip = this.tripsRepository.create(createTripRequestDto);
+    trip.status = TripStatus.Active;
 
     const tripSaved = await this.tripsRepository.save(trip);
 
@@ -82,13 +91,7 @@ export class TripsService {
   ): Promise<UpdateTripResponseDto> {
     const trip = await this.tripsRepository.findOne({ where: { id } });
 
-    if (!trip) {
-      throw new NotFoundException(`Trip with ID ${id} not found`);
-    }
-
-    if (trip.status === TripStatus.Completed) {
-      throw new ConflictException('Completed trips cannot be modified');
-    }
+    await this.validateTripUpdate(trip, updateTripRequestDto);
 
     Object.assign(trip, updateTripRequestDto);
 
@@ -111,5 +114,60 @@ export class TripsService {
     }
 
     return InvoiceToDtoMapper.toGetInvoiceResponseDto(invoice);
+  }
+
+  private async validateTripCreate(
+    createTripRequestDto: CreateTripRequestDto,
+  ): Promise<void> {
+    const driverExists = await this.driversService.driverExists(
+      createTripRequestDto.driverId,
+    );
+    if (!driverExists) {
+      throw new NotFoundException('Driver not found');
+    }
+
+    const isDriverAvailable = await this.driversService.isDriverAvailable(
+      createTripRequestDto.driverId,
+    );
+    if (!isDriverAvailable) {
+      throw new BadRequestException('Driver is not available');
+    }
+
+    const passengerExists = await this.passengersService.passengerExists(
+      createTripRequestDto.passengerId,
+    );
+    if (!passengerExists) {
+      throw new NotFoundException('Passenger not found');
+    }
+  }
+
+  private async validateTripUpdate(
+    trip: Trip,
+    updateTripRequestDto: UpdateTripRequestDto,
+  ): Promise<void> {
+    if (!trip) {
+      throw new NotFoundException('Trip not found');
+    }
+
+    if (
+      trip.status === TripStatus.Completed ||
+      trip.status === TripStatus.Canceled
+    ) {
+      throw new ConflictException(
+        'Completed or Canceled trips cannot be modified',
+      );
+    }
+
+    if (updateTripRequestDto.status === TripStatus.Completed) {
+      if (
+        !updateTripRequestDto.endTime ||
+        updateTripRequestDto.endLatitude === undefined ||
+        updateTripRequestDto.endLongitude === undefined
+      ) {
+        throw new BadRequestException(
+          'End time and coordinates must be provided for completed trips',
+        );
+      }
+    }
   }
 }

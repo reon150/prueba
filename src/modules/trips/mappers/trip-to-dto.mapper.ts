@@ -38,8 +38,7 @@ export class TripToDtoMapper {
       passengerId: trip.passengerId,
       startLatitude: trip.startLatitude,
       startLongitude: trip.startLongitude,
-      endLatitude: trip.endLatitude,
-      endLongitude: trip.endLongitude,
+      startTime: trip.startTime,
       status: trip.status,
       createdAt: trip.createdAt.toISOString(),
     };

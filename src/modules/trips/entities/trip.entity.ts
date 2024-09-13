@@ -46,7 +46,7 @@ export class Trip extends BaseEntity {
   @Column({
     name: 'start_time',
     type: 'timestamp with time zone',
-    nullable: true,
+    nullable: false,
   })
   startTime: Date;
 

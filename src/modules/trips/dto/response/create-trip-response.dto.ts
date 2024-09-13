@@ -38,20 +38,11 @@ export class CreateTripResponseDto {
   startLongitude: number;
 
   @ApiProperty({
-    description: 'End latitude of the trip',
-    type: Number,
-    example: 40.73061,
-    required: false,
+    description: 'Start time of the trip',
+    type: String,
+    example: '2024-09-13T08:45:00Z',
   })
-  endLatitude?: number;
-
-  @ApiProperty({
-    description: 'End longitude of the trip',
-    type: Number,
-    example: -73.935242,
-    required: false,
-  })
-  endLongitude?: number;
+  startTime: Date;
 
   @ApiProperty({
     description: 'The current status of the trip',

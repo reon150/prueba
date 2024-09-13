@@ -13,42 +13,52 @@ export class AppConfigService {
   }
 
   get appEnv(): string {
-    return this.configService.get<string>('APP_ENV');
+    return this.getConfig('APP_ENV');
   }
 
   get appPort(): number {
-    return this.configService.get<number>('APP_PORT');
+    return parseInt(this.getConfig('APP_PORT'));
   }
 
   get dbHost(): string {
-    return this.configService.get<string>('DB_HOST');
+    return this.getConfig('DB_HOST');
   }
 
   get dbPort(): number {
-    return this.configService.get<number>('DB_PORT');
+    return parseInt(this.getConfig('DB_PORT'));
   }
 
   get dbUsername(): string {
-    return this.configService.get<string>('DB_USERNAME');
+    return this.getConfig('DB_USERNAME');
   }
 
   get dbPassword(): string {
-    return this.configService.get<string>('DB_PASSWORD');
+    return this.getConfig('DB_PASSWORD');
   }
 
   get dbName(): string {
-    return this.configService.get<string>('DB_NAME');
+    return this.getConfig('DB_NAME');
   }
 
   get baseFare(): number {
-    return this.configService.get<number>('FARE_BASE');
+    return parseFloat(this.getConfig('FARE_BASE'));
   }
 
   get costPerKm(): number {
-    return this.configService.get<number>('FARE_COST_PER_KM');
+    return parseFloat(this.getConfig('FARE_COST_PER_KM'));
   }
 
   get costPerMinute(): number {
-    return this.configService.get<number>('FARE_COST_PER_MINUTE');
+    return parseFloat(this.getConfig('FARE_COST_PER_MINUTE'));
+  }
+
+  private getConfig(key: string): string {
+    const value = this.configService.get<string>(key);
+    if (value === undefined) {
+      throw new Error(
+        `Configuration for ${key} is required but was not found.`,
+      );
+    }
+    return value;
   }
 }

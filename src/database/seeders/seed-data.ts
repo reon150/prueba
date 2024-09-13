@@ -97,7 +97,11 @@ async function seedData(dataSource: DataSource): Promise<void> {
         noEligiblePassengersOrDrivers = true;
       }
     } else {
-      status = TripStatus.Completed;
+      const weightedStatuses = [
+        ...Array(17).fill(TripStatus.Completed),
+        TripStatus.Canceled,
+      ];
+      status = faker.helpers.arrayElement(weightedStatuses);
       selectedDriver = faker.helpers.arrayElement(drivers);
       selectedPassenger = faker.helpers.arrayElement(passengers);
     }

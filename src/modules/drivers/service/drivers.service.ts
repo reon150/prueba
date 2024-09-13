@@ -116,4 +116,23 @@ export class DriversService {
 
     return DriverToDtoMapper.toGetNearbyDriversResponseDto(drivers);
   }
+
+  async driverExists(id: string): Promise<boolean> {
+    const driver = await this.driversRepository.findOne({
+      where: { id },
+    });
+    return !!driver;
+  }
+
+  async isDriverAvailable(id: string): Promise<boolean> {
+    const driver = await this.driversRepository.findOne({
+      where: { id },
+    });
+
+    if (!driver) {
+      return false;
+    }
+
+    return driver.isAvailable;
+  }
 }

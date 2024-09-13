@@ -28,6 +28,8 @@ export class InvoicesService {
       paymentStatus: PaymentStatus.Processing,
     });
 
+    console.log('INVOICE', invoice);
+
     const savedInvoice = await this.invoicesRepository.save(invoice);
 
     this.processInvoice(savedInvoice);

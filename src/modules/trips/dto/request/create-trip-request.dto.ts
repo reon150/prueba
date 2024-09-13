@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID, IsNumber, IsEnum, IsOptional } from 'class-validator';
-import { TripStatus } from '../../enums';
+import { IsUUID, IsNumber, IsDate } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateTripRequestDto {
   @ApiProperty({
@@ -36,30 +36,12 @@ export class CreateTripRequestDto {
   startLongitude: number;
 
   @ApiProperty({
-    description: 'End latitude of the trip',
-    type: Number,
-    example: 40.73061,
-    required: false,
+    description: 'Start time of the trip',
+    type: String,
+    format: 'date-time',
+    example: '2024-09-13T08:45:00Z',
   })
-  @IsOptional()
-  @IsNumber()
-  endLatitude?: number;
-
-  @ApiProperty({
-    description: 'End longitude of the trip',
-    type: Number,
-    example: -73.935242,
-    required: false,
-  })
-  @IsOptional()
-  @IsNumber()
-  endLongitude?: number;
-
-  @ApiProperty({
-    description: 'The current status of the trip',
-    enum: TripStatus,
-    example: TripStatus.Active,
-  })
-  @IsEnum(TripStatus)
-  status: TripStatus;
+  @IsDate()
+  @Type(() => Date)
+  startTime: Date;
 }
