@@ -11,11 +11,13 @@ import {
 import { Trip } from '../entities';
 import { getLimitValue, PaginationResponseDto } from 'src/common';
 import { TripToDtoMapper } from '../mappers';
+import { InvoicesService } from 'src/modules/invoices/service/Invoices.service';
 
 @Injectable()
 export class TripsService {
   constructor(
     @InjectRepository(Trip) private readonly tripRepository: Repository<Trip>,
+    private readonly invoiceService: InvoicesService,
   ) {}
 
   async findAll(

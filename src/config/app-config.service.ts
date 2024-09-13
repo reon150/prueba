@@ -39,4 +39,16 @@ export class AppConfigService {
   get dbName(): string {
     return this.configService.get<string>('DB_NAME');
   }
+
+  get baseFare(): number {
+    return this.configService.get<number>('FARE_BASE');
+  }
+
+  get costPerKm(): number {
+    return this.configService.get<number>('FARE_COST_PER_KM');
+  }
+
+  get costPerMinute(): number {
+    return this.configService.get<number>('FARE_COST_PER_MINUTE');
+  }
 }

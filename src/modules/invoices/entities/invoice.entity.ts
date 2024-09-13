@@ -7,9 +7,10 @@ import {
 } from 'typeorm';
 import { PaymentStatus } from '../enums';
 import { Trip } from 'src/modules/trips/entities';
+import { BaseEntity } from 'src/common';
 
 @Entity({ name: 'invoices' })
-export class Invoice {
+export class Invoice extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -25,18 +26,4 @@ export class Invoice {
 
   @Column({ type: 'enum', enum: PaymentStatus })
   paymentStatus: PaymentStatus;
-
-  @Column({
-    name: 'created_at',
-    type: 'timestamp with time zone',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  createdAt: Date;
-
-  @Column({
-    name: 'updated_at',
-    type: 'timestamp with time zone',
-    default: () => 'CURRENT_TIMESTAMP',
-  })
-  updatedAt: Date;
 }
