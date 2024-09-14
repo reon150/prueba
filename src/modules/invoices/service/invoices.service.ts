@@ -5,7 +5,7 @@ import { PaymentStatus } from '../enums';
 import { Invoice } from '../entities';
 import { AppConfigService } from '../../../config';
 import { Trip } from '../../trips/entities';
-import { calculateAngularDistance } from '../../../common';
+import { calculateDistanceInKm } from '../../../common';
 
 @Injectable()
 export class InvoicesService {
@@ -42,7 +42,7 @@ export class InvoicesService {
     const costPerKm = this.appConfigService.costPerKm;
     const costPerMinute = this.appConfigService.costPerMinute;
 
-    const distance = calculateAngularDistance(
+    const distance = calculateDistanceInKm(
       trip.startLatitude,
       trip.startLongitude,
       trip.endLatitude,

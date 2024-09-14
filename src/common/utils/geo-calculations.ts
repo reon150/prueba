@@ -29,3 +29,23 @@ export const calculateAngularDistance = (
     )
   );
 };
+
+// Calculate distance between two geo points in kilometers
+export const calculateDistanceInKm = (
+  startLatitude: number,
+  startLongitude: number,
+  endLatitude: number,
+  endLongitude: number,
+): number => {
+  const angularDistance = calculateAngularDistance(
+    startLatitude,
+    startLongitude,
+    endLatitude,
+    endLongitude,
+  );
+
+  // Earth's average radius in kilometers
+  const earthRadiusKm = 6371;
+
+  return angularDistance * earthRadiusKm;
+};
