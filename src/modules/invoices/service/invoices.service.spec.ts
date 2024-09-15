@@ -153,5 +153,36 @@ describe('InvoicesService', () => {
       );
       expect(result.amount).toEqual(amountMock);
     });
+
+    it('should proccess an invoice', async () => {
+      jest.useFakeTimers();
+
+      const tripMock = new Trip();
+      tripMock.id = '9a11b8ef-7789-4b0d-a844-f9e7727f9b6a';
+      tripMock.startTime = new Date('2024-01-01T00:00:00Z');
+      tripMock.endTime = new Date('2024-01-01T01:00:00Z');
+
+      const invoiceMock = new Invoice();
+      invoiceMock.tripId = tripMock.id;
+
+      jest
+        .spyOn(geoCalculationsUtils, 'calculateDistanceInKm')
+        .mockReturnValue(50);
+
+      repositoryMock.create.mockReturnValue(invoiceMock);
+      repositoryMock.save.mockResolvedValue(invoiceMock);
+
+      await service.create(tripMock);
+
+      jest.runAllTimers();
+
+      const savedInvoice = repositoryMock.save.mock.calls[0][0];
+      expect(savedInvoice.paymentStatus).not.toBe(PaymentStatus.Processing);
+      expect([PaymentStatus.Paid, PaymentStatus.Unpaid]).toContain(
+        savedInvoice.paymentStatus,
+      );
+
+      jest.useRealTimers();
+    });
   });
 });
