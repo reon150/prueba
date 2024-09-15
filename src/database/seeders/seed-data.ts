@@ -25,6 +25,23 @@ async function seedData(dataSource: DataSource): Promise<void> {
   const invoicesRepository: Repository<Invoice> =
     dataSource.getRepository(Invoice);
 
+  // Check if data already exists
+  const driverCount = await driversRepository.count();
+  const passengerCount = await passengersRepository.count();
+  const tripCount = await tripsRepository.count();
+  const invoiceCount = await invoicesRepository.count();
+
+  // If there is already data, skip seeding
+  if (
+    driverCount > 0 ||
+    passengerCount > 0 ||
+    tripCount > 0 ||
+    invoiceCount > 0
+  ) {
+    console.log('Data already exists, skipping seeding.');
+    return;
+  }
+
   const santoDomingoCenter: [number, number] = [18.486058, -69.931212];
 
   // Create drivers

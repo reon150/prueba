@@ -1,73 +1,167 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Taxi24
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A continuación, se describen métodos de ejecución.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Prerrequisitos
 
-## Description
+Antes de comenzar, asegúrate de tener instalados los siguientes programas:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- [Node.js](https://nodejs.org) (versión 18 o superior)
+- [Docker](https://www.docker.com) y [Docker Compose](https://docs.docker.com/compose/)
+- [PostgreSQL](https://www.postgresql.org) (opcional si deseas ejecutar el proyecto localmente sin Docker)
 
-## Installation
+## Variables de Entorno
+
+Asegúrate de tener un archivo `.env` con las siguientes variables de entorno. Puedes utilizar el archivo `.env.example` como base.
+
+## Ejecutar con Docker
+
+Para ejecutar el proyecto utilizando Docker, sigue los siguientes pasos:
+
+1. **Clonar el repositorio**:
 
 ```bash
-$ npm install
+git clone https://github.com/tu-usuario/taxi24.git
+cd taxi24
 ```
 
-## Running the app
+2. **Configurar las variables de entorno**:
+
+   Asegúrate de tener un archivo `.env` con los valores correctos de configuración. Puedes copiar el archivo `.env.example` y modificarlo según sea necesario:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+ cp .env.example .env
 ```
 
-## Test
+3. **Construir y ejecutar los contenedores**:
+
+   Ejecuta el siguiente comando para levantar la aplicación junto con la base de datos PostgreSQL utilizando Docker Compose:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+ docker-compose up --build
 ```
 
-## Support
+4. **Acceder a la aplicación**:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+   Una vez que los contenedores estén en ejecución, puedes acceder a la aplicación desde tu navegador web en la siguiente URL:
 
-## Stay in touch
+   http://localhost:3000
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+   **Nota**: Si cambiaste el puerto en el archivo `.env`, usa el puerto correspondiente.
 
-## License
+5. **Comandos adicionales**:
 
-Nest is [MIT licensed](LICENSE).
+   - Para detener los contenedores:
+
+   ```bash
+    docker-compose down
+   ```
+
+   - Para ver los logs de la aplicación:
+
+   ```bash
+    docker-compose logs -f
+   ```
+
+## Ejecutar de forma local (sin Docker)
+
+Si prefieres ejecutar el proyecto de forma local sin Docker, sigue estos pasos:
+
+1. **Clonar el repositorio**:
+
+```bash
+ git clone https://github.com/tu-usuario/taxi24.git
+ cd taxi24
+```
+
+2. **Configurar las variables de entorno**:
+
+   Asegúrate de tener un archivo `.env` con los valores correctos de configuración. Puedes copiar el archivo `.env.example` y modificarlo según sea necesario:
+
+```bash
+ cp .env.example .env
+```
+
+3. **Instalar dependencias**:
+
+   Ejecuta el siguiente comando para instalar las dependencias del proyecto:
+
+```bash
+ npm install
+```
+
+4. **Configurar la base de datos**:
+
+   - Asegúrate de tener PostgreSQL instalado y en ejecución.
+   - Crea una base de datos con el nombre especificado en el archivo `.env` (`DB_NAME`).
+   - Asegúrate de que los detalles de conexión (`DB_HOST`, `DB_USERNAME`, `DB_PASSWORD`, `DB_PORT`) sean correctos.
+
+5. **Ejecutar las migraciones**:
+
+   Ejecuta las migraciones de la base de datos con el siguiente comando:
+
+```bash
+ npm run migration:run
+```
+
+6. **Sembrar datos (opcional)**:
+
+   Si estás en el entorno de desarrollo y deseas sembrar datos de prueba, puedes ejecutar el siguiente comando:
+
+```bash
+ npm run seed:run
+```
+
+7. **Iniciar la aplicación**:
+
+   Finalmente, inicia la aplicación utilizando el siguiente comando:
+
+```bash
+ npm run start:dev
+```
+
+La aplicación estará disponible en:
+
+http://localhost:3000
+
+## Ejecutar los Tests
+
+Este proyecto incluye una suite de tests para asegurar la funcionalidad del código. Los tests están escritos utilizando [Jest](https://jestjs.io/).
+
+### Comandos disponibles para los tests:
+
+- **Ejecutar todos los tests**:
+
+  Utiliza el siguiente comando para ejecutar todos los tests:
+
+  ```bash
+  npm run test
+  ```
+
+- **Ejecutar tests en modo de observación**:
+
+  Si deseas ejecutar los tests continuamente cada vez que se realicen cambios en los archivos, utiliza el siguiente comando:
+
+  ```bash
+  npm run test:watch
+  ```
+
+- **Ver el informe de cobertura**:
+
+  Para generar un informe de cobertura de los tests, utiliza el siguiente comando:
+
+  ```bash
+  npm run test:cov
+  ```
+
+- **Depurar tests**:
+
+  Si necesitas depurar los tests, puedes hacerlo utilizando el siguiente comando, que abrirá un puerto para que puedas conectar un depurador:
+
+  ```bash
+  npm run test:debug
+  ```
+
+### Reporte de Cobertura
+
+Después de ejecutar los tests con el comando de cobertura (`npm run test:cov`), se generará un reporte detallado que puedes encontrar en la carpeta `coverage/`.
