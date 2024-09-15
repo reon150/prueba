@@ -5,8 +5,14 @@ import { NotFoundException } from '@nestjs/common';
 import { PassengersService } from './passengers.service';
 import { Passenger } from '../entities/passenger.entity';
 import { PassengerToDtoMapper } from '../mappers';
-import { GetPassengerResponseDto } from '../dto';
+import {
+  GetPassengerResponseDto,
+  GetPassengersRequestDto,
+  GetPassengersResponseDto,
+  PassengerSortBy,
+} from '../dto';
 import { repositoryMock } from '../../../common/mocks';
+import { PaginationResponseDto, SortOrder } from '../../../common';
 
 describe('PassengersService', () => {
   let service: PassengersService;
@@ -68,6 +74,88 @@ describe('PassengersService', () => {
       await expect(service.findOne(passengerId)).rejects.toThrow(
         NotFoundException,
       );
+    });
+  });
+
+  describe('findAll', () => {
+    it('should return paginated passengers when passengers exist', async () => {
+      const queryMock: GetPassengersRequestDto = {
+        page: 1,
+        limit: 10,
+        sortBy: PassengerSortBy.name,
+        sortOrder: SortOrder.ASC,
+      };
+      const passengersMock = [new Passenger(), new Passenger()];
+      const totalPassengers = 2;
+      const paginationResponseMock = new PaginationResponseDto(
+        passengersMock,
+        totalPassengers,
+        queryMock.page,
+        queryMock.limit,
+        'passengers',
+      );
+      const passengersResponseDtoMock = [
+        new GetPassengersResponseDto(),
+        new GetPassengersResponseDto(),
+      ];
+
+      jest
+        .spyOn(passengersRepository, 'findAndCount')
+        .mockResolvedValue([passengersMock, totalPassengers]);
+      jest
+        .spyOn(PassengerToDtoMapper, 'toGetPassengersResponseDto')
+        .mockReturnValue(passengersResponseDtoMock);
+
+      const result = await service.findAll(queryMock);
+
+      expect(passengersRepository.findAndCount).toHaveBeenCalledWith({
+        skip: (queryMock.page - 1) * queryMock.limit,
+        take: queryMock.limit,
+        order: { [queryMock.sortBy]: queryMock.sortOrder },
+      });
+      expect(
+        PassengerToDtoMapper.toGetPassengersResponseDto,
+      ).toHaveBeenCalledWith(passengersMock);
+      expect(result).toEqual(paginationResponseMock);
+    });
+
+    it('should return passengers without sorting when sortBy is not provided', async () => {
+      const queryMock: GetPassengersRequestDto = {
+        page: 1,
+        limit: 10,
+      };
+      const passengersMock = [new Passenger(), new Passenger()];
+      const totalPassengers = 2;
+      const passengersResponseDtoMock = [
+        new GetPassengersResponseDto(),
+        new GetPassengersResponseDto(),
+      ];
+      const paginationResponseMock = new PaginationResponseDto(
+        passengersResponseDtoMock,
+        totalPassengers,
+        queryMock.page,
+        queryMock.limit,
+        'passengers',
+      );
+
+      jest
+        .spyOn(passengersRepository, 'findAndCount')
+        .mockResolvedValue([passengersMock, totalPassengers]);
+      jest
+        .spyOn(PassengerToDtoMapper, 'toGetPassengersResponseDto')
+        .mockReturnValue(passengersResponseDtoMock);
+
+      const result = await service.findAll(queryMock);
+
+      expect(passengersRepository.findAndCount).toHaveBeenCalledWith({
+        skip: (queryMock.page - 1) * queryMock.limit,
+        take: queryMock.limit,
+        order: {},
+      });
+      expect(
+        PassengerToDtoMapper.toGetPassengersResponseDto,
+      ).toHaveBeenCalledWith(passengersMock);
+      expect(result).toEqual(paginationResponseMock);
     });
   });
 
