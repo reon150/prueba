@@ -22,7 +22,7 @@ Para ejecutar el proyecto utilizando Docker, sigue los siguientes pasos:
 
 ```bash
 git clone https://github.com/reon150/prueba.git
-cd taxi24
+cd prueba
 ```
 
 2. **Configurar las variables de entorno**:
@@ -71,7 +71,7 @@ Si prefieres ejecutar el proyecto de forma local sin Docker, sigue estos pasos:
 
 ```bash
  git clone https://github.com/reon150/prueba.git
- cd taxi24
+ cd prueba
 ```
 
 2. **Configurar las variables de entorno**:
