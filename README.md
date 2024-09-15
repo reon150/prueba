@@ -165,3 +165,125 @@ Este proyecto incluye una suite de tests para asegurar la funcionalidad del cód
 ### Reporte de Cobertura
 
 Después de ejecutar los tests con el comando de cobertura (`npm run test:cov`), se generará un reporte detallado que puedes encontrar en la carpeta `coverage/`.
+
+## Uso de la API
+
+La API de Taxi24 proporciona múltiples endpoints para gestionar conductores, viajes y pasajeros. A continuación se describen algunos casos de uso comunes para los consumidores de la API, implementados de manera RESTful.
+
+### Conductores
+
+1. **Obtener una lista de todos los conductores**:
+
+   - **Endpoint**: `GET /api/drivers`
+   - **Descripción**: Devuelve una lista paginada de todos los conductores.
+   - **Parámetros opcionales**:
+     - `page`: Número de página (por defecto: 1)
+     - `limit`: Límite de elementos por página (por defecto: 10)
+     - `isAvailable`: Filtrar por disponibilidad (boolean)
+     - `sortBy`: Campo por el cual ordenar (ejemplo: `name`, `email`)
+     - `sortOrder`: Orden de la lista (`ASC`, `DESC`)
+
+2. **Obtener una lista de todos los conductores disponibles**:
+
+   - **Endpoint**: `GET /api/drivers?isAvailable=true`
+   - **Descripción**: Devuelve una lista de conductores disponibles.
+
+3. **Obtener una lista de todos los conductores disponibles en un radio de 3 km para una ubicación específica**:
+
+   - **Endpoint**: `GET /api/drivers/nearby`
+   - **Descripción**: Devuelve una lista de conductores cercanos a una ubicación.
+   - **Parámetros requeridos**:
+     - `latitude`: Latitud de la ubicación.
+     - `longitude`: Longitud de la ubicación.
+     - `radius`: Radio de búsqueda en kilómetros (ejemplo: `3`).
+
+4. **Obtener un conductor específico por ID**:
+   - **Endpoint**: `GET /api/drivers/{id}`
+   - **Descripción**: Devuelve información detallada de un conductor específico por su ID.
+
+### Viajes
+
+1. **Crear una nueva solicitud de viaje asignando un conductor a un pasajero**:
+
+   - **Endpoint**: `POST /api/trips`
+   - **Descripción**: Crea un nuevo viaje asignando un conductor y un pasajero.
+   - **Cuerpo de la solicitud (JSON)**:
+     ```json
+     {
+       "driverId": "uuid-del-conductor",
+       "passengerId": "uuid-del-pasajero",
+       "startLatitude": 40.712776,
+       "startLongitude": -74.005974,
+       "startTime": "2024-09-13T08:45:00Z"
+     }
+     ```
+
+2. **Completar un viaje**:
+
+   - **Endpoint**: `PATCH /api/trips/{id}`
+   - **Descripción**: Actualiza el estado de un viaje a "completado" proporcionando la ubicación de destino y el tiempo de finalización.
+   - **Cuerpo de la solicitud (JSON)**:
+     ```json
+     {
+       "status": "Completed",
+       "endLatitude": 40.73061,
+       "endLongitude": -73.935242,
+       "endTime": "2024-09-13T09:15:00Z"
+     }
+     ```
+
+3. **Obtener una lista de todos los viajes activos**:
+   - **Endpoint**: `GET /api/trips?status=Active`
+   - **Descripción**: Devuelve una lista de todos los viajes activos.
+
+### Pasajeros
+
+1. **Obtener una lista de todos los pasajeros**:
+
+   - **Endpoint**: `GET /api/passengers`
+   - **Descripción**: Devuelve una lista paginada de todos los pasajeros.
+
+2. **Obtener un pasajero específico por su ID**:
+
+   - **Endpoint**: `GET /api/passengers/{id}`
+   - **Descripción**: Devuelve información detallada de un pasajero específico por su ID.
+
+3. **Para un pasajero solicitando un viaje, obtener una lista de los 3 conductores más cercanos al punto de partida**:
+   - **Endpoint**: `GET /api/drivers/nearby`
+   - **Descripción**: Devuelve los 3 conductores más cercanos a la ubicación de partida del pasajero.
+   - **Parámetros requeridos**:
+     - `latitude`: Latitud de la ubicación del pasajero.
+     - `longitude`: Longitud de la ubicación del pasajero.
+     - `count`: Número de conductores a devolver (ejemplo: `3`).
+
+### Ejemplo de Respuesta
+
+Un ejemplo de respuesta JSON para la lista de conductores:
+
+```json
+{
+  "data": [
+    {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "name": "John Doe",
+      "licenseNumber": "LIC1234567",
+      "email": "johndoe@example.com",
+      "phoneNumber": "+18095551234",
+      "isAvailable": true,
+      "locationLatitude": 37.7749,
+      "locationLongitude": -122.4194,
+      "createdAt": "2023-09-10T12:00:00Z"
+    }
+  ],
+  "meta": {
+    "total": 100,
+    "currentPage": 1,
+    "itemsPerPage": 10,
+    "totalPages": 10
+  }
+}
+```
+
+Se puede acceder a la documentación completa de la API generada con Swagger en la siguiente URL:
+
+[http://localhost:3000/api/docs](http://localhost:3000/api/docs)
