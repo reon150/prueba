@@ -4,10 +4,10 @@ import { InvoicesService } from './invoices.service';
 import { Invoice } from '../entities';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AppConfigService } from '../../../config';
-import { appConfigServiceMock, repositoryMock } from '../../../common';
 import { Trip } from '../../trips/entities';
 import * as geoCalculationsUtils from '../../../common/utils/geo-calculations';
 import { PaymentStatus } from '../enums';
+import { appConfigServiceMock, repositoryMock } from '../../../common/mocks';
 
 describe('InvoicesService', () => {
   let service: InvoicesService;

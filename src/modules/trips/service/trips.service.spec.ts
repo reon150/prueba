@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TripsService } from './trips.service';
-import { InvoicesService } from '../../invoices/service/Invoices.service';
 import { InvoiceToDtoMapper, TripToDtoMapper } from '../mappers';
 import {
   CreateTripRequestDto,
@@ -11,11 +10,12 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Trip } from '../entities';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { repositoryMock } from '../../../common';
 import { Invoice } from '../../invoices/entities';
 import { PassengersService } from '../../passengers/service/passengers.service';
 import { DriversService } from '../../drivers/service/drivers.service';
 import { TripStatus } from '../enums';
+import { InvoicesService } from '../../invoices/service/invoices.service';
+import { repositoryMock } from '../../../common/mocks';
 
 jest.mock('../mappers/invoice-to-dto.mapper');
 

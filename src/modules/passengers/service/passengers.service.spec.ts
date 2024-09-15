@@ -4,9 +4,9 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException } from '@nestjs/common';
 import { PassengersService } from './passengers.service';
 import { Passenger } from '../entities/passenger.entity';
-import { repositoryMock } from '../../../common'; // Ensure this mock is appropriately set up to mimic the Repository behavior.
 import { PassengerToDtoMapper } from '../mappers';
 import { GetPassengerResponseDto } from '../dto';
+import { repositoryMock } from '../../../common/mocks';
 
 describe('PassengersService', () => {
   let service: PassengersService;

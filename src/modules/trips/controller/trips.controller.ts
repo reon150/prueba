@@ -23,7 +23,7 @@ import {
   UpdateTripRequestDto,
   UpdateTripResponseDto,
 } from '../dto';
-import { TripsService } from '../service/Trips.service';
+import { TripsService } from '../service/trips.service';
 import {
   ApiPaginatedResponse,
   PaginationResponseDto,

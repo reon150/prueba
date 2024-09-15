@@ -26,7 +26,7 @@ export class GetDriversRequestDto extends PaginationRequestDto {
   @ApiPropertyOptional({
     description: 'Field to sort by',
     enum: DriverSortByEnum,
-    enumName: 'DriverSortBy',
+    enumName: 'GetDriversRequestSortByDto',
   })
   @IsEnum(DriverSortByEnum)
   @IsOptional()

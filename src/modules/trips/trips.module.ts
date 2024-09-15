@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TripsService } from './service/Trips.service';
-import { TripsController } from './controller/Trips.controller';
+import { TripsService } from './service/trips.service';
+import { TripsController } from './controller/trips.controller';
 import { Trip } from './entities';
 import { InvoicesModule } from '../invoices/invoices.module';
 import { DriversModule } from '../drivers/drivers.module';

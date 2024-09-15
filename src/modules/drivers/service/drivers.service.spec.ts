@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { DriversService } from './drivers.service';
 import { Driver } from '../entities/driver.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { repositoryMock } from '../../../common';
+import { repositoryMock } from '../../../common/mocks';
 
 describe('DriversService', () => {
   let service: DriversService;

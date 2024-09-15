@@ -19,7 +19,7 @@ import { Trip } from '../entities';
 import { InvoiceToDtoMapper, TripToDtoMapper } from '../mappers';
 import { TripStatus } from '../enums';
 import { DriversService } from '../../drivers/service/drivers.service';
-import { InvoicesService } from '../../invoices/service/Invoices.service';
+import { InvoicesService } from '../../invoices/service/invoices.service';
 import { PassengersService } from '../../passengers/service/passengers.service';
 import { getLimitValue, PaginationResponseDto } from '../../../common';
 

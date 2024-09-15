@@ -1,16 +1,25 @@
-version: '3'
+version: '3.9'
+
 services:
   app:
     container_name: taxi24_app
     build: .
     ports:
-      - "${APP_PORT}:3000"
+      - '${APP_PORT}:3000'
     environment:
-      APP_PORT: ${APP_PORT}
       APP_ENV: ${APP_ENV}
-      DB_URL: postgres://${DB_USERNAME}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      APP_PORT: ${APP_PORT}
+      DB_HOST: db
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_PORT: ${DB_PORT}
+      FARE_BASE: ${FARE_BASE}
+      FARE_COST_PER_KM: ${FARE_COST_PER_KM}
+      FARE_COST_PER_MINUTE: ${FARE_COST_PER_MINUTE}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     container_name: taxi24_db
@@ -20,9 +29,15 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - "${DB_PORT}:5432"
+      - '${DB_PORT}:5432'
     volumes:
       - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', '${DB_USERNAME}', '-d', '${DB_NAME}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
   db_data:
