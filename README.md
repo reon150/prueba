@@ -21,7 +21,7 @@ Para ejecutar el proyecto utilizando Docker, sigue los siguientes pasos:
 1. **Clonar el repositorio**:
 
 ```bash
-git clone https://github.com/tu-usuario/taxi24.git
+git clone https://github.com/reon150/prueba.git
 cd taxi24
 ```
 
@@ -70,7 +70,7 @@ Si prefieres ejecutar el proyecto de forma local sin Docker, sigue estos pasos:
 1. **Clonar el repositorio**:
 
 ```bash
- git clone https://github.com/tu-usuario/taxi24.git
+ git clone https://github.com/reon150/prueba.git
  cd taxi24
 ```
 
