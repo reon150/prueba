@@ -4,6 +4,15 @@ import { DriversService } from './drivers.service';
 import { Driver } from '../entities/driver.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { repositoryMock } from '../../../common/mocks';
+import { DriverToDtoMapper } from '../mappers';
+import {
+  GetDriverResponseDto,
+  GetDriversRequestDto,
+  GetDriversRequestSortByDto,
+  GetDriversResponseDto,
+} from '../dto';
+import { NotFoundException } from '@nestjs/common';
+import { PaginationResponseDto } from '../../../common';
 
 describe('DriversService', () => {
   let service: DriversService;
@@ -31,6 +40,131 @@ describe('DriversService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
     expect(driversRepository).toBeDefined();
+  });
+
+  describe('findOne', () => {
+    it('should return a driver DTO if the driver exists', async () => {
+      const driverId = '82895cee-66bd-4505-8464-54165ea627d1';
+      const driverMock = new Driver();
+      const driverResponseDtoMock = new GetDriverResponseDto();
+
+      jest.spyOn(driversRepository, 'findOne').mockResolvedValue(driverMock);
+      jest
+        .spyOn(DriverToDtoMapper, 'toGetDriverResponseDto')
+        .mockReturnValue(driverResponseDtoMock);
+
+      const result = await service.findOne(driverId);
+
+      expect(driversRepository.findOne).toHaveBeenCalledWith({
+        where: { id: driverId },
+        relations: ['trips', 'trips.passenger'],
+      });
+      expect(DriverToDtoMapper.toGetDriverResponseDto).toHaveBeenCalledWith(
+        driverMock,
+      );
+      expect(result).toEqual(driverResponseDtoMock);
+    });
+
+    it('should throw a NotFoundException if the driver does not exist', async () => {
+      const driverId = '15bc0e8f-75c6-47c6-ab56-597a50829efa';
+
+      jest.spyOn(driversRepository, 'findOne').mockResolvedValue(undefined);
+
+      await expect(service.findOne(driverId)).rejects.toThrow(
+        new NotFoundException(`Driver with ID ${driverId} not found`),
+      );
+    });
+  });
+
+  describe('findAll', () => {
+    const query: GetDriversRequestDto = {
+      page: 1,
+      limit: 10,
+      sortBy: GetDriversRequestSortByDto.name,
+      sortOrder: 'ASC',
+      isAvailable: true,
+    };
+
+    it('should return paginated drivers when drivers exist', async () => {
+      const driversMock = [new Driver(), new Driver()];
+      const totalDrivers = 2;
+      const paginationResponseMock = new PaginationResponseDto(
+        driversMock,
+        totalDrivers,
+        query.page,
+        query.limit,
+        'drivers',
+      );
+      const driversResponseDtoMock = [
+        new GetDriversResponseDto(),
+        new GetDriversResponseDto(),
+      ];
+
+      jest
+        .spyOn(driversRepository, 'findAndCount')
+        .mockResolvedValue([driversMock, totalDrivers]);
+      jest
+        .spyOn(DriverToDtoMapper, 'toGetDriversResponseDto')
+        .mockReturnValue(driversResponseDtoMock);
+
+      const result = await service.findAll(query);
+
+      expect(driversRepository.findAndCount).toHaveBeenCalledWith({
+        skip: (query.page - 1) * query.limit,
+        take: query.limit,
+        where: { isAvailable: query.isAvailable },
+        order: { [query.sortBy]: query.sortOrder },
+      });
+      expect(DriverToDtoMapper.toGetDriversResponseDto).toHaveBeenCalledWith(
+        driversMock,
+      );
+      expect(result).toEqual(paginationResponseMock);
+    });
+
+    it('should return drivers without filtering by availability when isAvailable is not provided', async () => {
+      const queryWithoutAvailability: GetDriversRequestDto = {
+        page: 1,
+        limit: 10,
+        sortBy: GetDriversRequestSortByDto.name,
+        sortOrder: 'ASC',
+      };
+      const driversMock = [new Driver(), new Driver()];
+      const totalDrivers = 2;
+      const paginationResponseMock = new PaginationResponseDto(
+        driversMock,
+        totalDrivers,
+        queryWithoutAvailability.page,
+        queryWithoutAvailability.limit,
+        'drivers',
+      );
+      const driversResponseDtoMock = [
+        new GetDriversResponseDto(),
+        new GetDriversResponseDto(),
+      ];
+
+      jest
+        .spyOn(driversRepository, 'findAndCount')
+        .mockResolvedValue([driversMock, totalDrivers]);
+      jest
+        .spyOn(DriverToDtoMapper, 'toGetDriversResponseDto')
+        .mockReturnValue(driversResponseDtoMock);
+
+      const result = await service.findAll(queryWithoutAvailability);
+
+      expect(driversRepository.findAndCount).toHaveBeenCalledWith({
+        skip:
+          (queryWithoutAvailability.page - 1) * queryWithoutAvailability.limit,
+        take: queryWithoutAvailability.limit,
+        where: {},
+        order: {
+          [queryWithoutAvailability.sortBy]: queryWithoutAvailability.sortOrder,
+        },
+      });
+      expect(DriverToDtoMapper.toGetDriversResponseDto).toHaveBeenCalledWith(
+        driversMock,
+      );
+      expect(result).toEqual(paginationResponseMock);
+    });
   });
 
   describe('driverExists', () => {

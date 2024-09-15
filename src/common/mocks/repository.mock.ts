@@ -2,6 +2,7 @@ export const repositoryMock = {
   find: jest.fn((entity) => Promise.resolve(entity)),
   findOne: jest.fn((id) => Promise.resolve(id)),
   findOneOrFail: jest.fn((id) => Promise.resolve(id)),
+  findAndCount: jest.fn((id) => Promise.resolve(id)),
   save: jest.fn((entity) => Promise.resolve(entity)),
   remove: jest.fn((entity) => Promise.resolve(entity)),
   create: jest.fn((entity) => entity),
