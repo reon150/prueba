@@ -5,8 +5,14 @@ import {
   CreateTripRequestDto,
   CreateTripResponseDto,
   GetInvoiceResponseDto,
+  UpdateTripRequestDto,
+  UpdateTripResponseDto,
 } from '../dto';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Trip } from '../entities';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -40,6 +46,7 @@ describe('TripsService', () => {
           provide: InvoicesService,
           useValue: {
             findOneByTripId: jest.fn(),
+            create: jest.fn(),
           },
         },
         {
@@ -71,43 +78,6 @@ describe('TripsService', () => {
     expect(invoicesService).toBeDefined();
     expect(driversService).toBeDefined();
     expect(passengersService).toBeDefined();
-  });
-
-  describe('findInvoiceByTripId', () => {
-    it('should return an invoice DTO when an invoice exists for the trip ID', async () => {
-      const tripId = '292bd0aa-15a3-4984-87f7-7660151ddbfa';
-      const invoiceMock = new Invoice();
-      const invoiceResponseDtoMock = new GetInvoiceResponseDto();
-
-      jest
-        .spyOn(invoicesService, 'findOneByTripId')
-        .mockResolvedValue(invoiceMock);
-      jest
-        .spyOn(InvoiceToDtoMapper, 'toGetInvoiceResponseDto')
-        .mockReturnValue(invoiceResponseDtoMock);
-
-      const result = await service.findInvoiceByTripId(tripId);
-
-      expect(invoicesService.findOneByTripId).toHaveBeenCalledTimes(1);
-      expect(invoicesService.findOneByTripId).toHaveBeenCalledWith(tripId);
-      expect(InvoiceToDtoMapper.toGetInvoiceResponseDto).toHaveBeenCalledTimes(
-        1,
-      );
-      expect(InvoiceToDtoMapper.toGetInvoiceResponseDto).toHaveBeenCalledWith(
-        invoiceMock,
-      );
-      expect(result).toEqual(invoiceResponseDtoMock);
-    });
-
-    it('should throw a NotFoundException when no invoice is found for the trip ID', async () => {
-      const tripId = '487d62b7-99b8-47a9-b8ab-ce274c153ac2';
-
-      jest.spyOn(invoicesService, 'findOneByTripId').mockResolvedValue(null);
-
-      await expect(service.findInvoiceByTripId(tripId)).rejects.toThrow(
-        NotFoundException,
-      );
-    });
   });
 
   describe('create', () => {
@@ -182,6 +152,129 @@ describe('TripsService', () => {
 
       await expect(service.create(createTripRequestDtoMock)).rejects.toThrow(
         BadRequestException,
+      );
+    });
+  });
+
+  describe('update', () => {
+    let updateTripRequestDtoMock: UpdateTripRequestDto;
+    let tripMock: Trip;
+
+    beforeEach(() => {
+      tripMock = new Trip();
+      tripMock.id = '2d804f90-0149-4df6-a0b9-5333cd9e2cc7';
+      tripMock.status = TripStatus.Active;
+
+      updateTripRequestDtoMock = {
+        endTime: new Date(),
+        endLatitude: 34.0522,
+        endLongitude: -118.2437,
+        status: TripStatus.Completed,
+      };
+
+      jest.clearAllMocks();
+    });
+
+    it('should successfully update a trip', async () => {
+      const updateTripResponseDtoMock = new UpdateTripResponseDto();
+
+      jest.spyOn(tripsRepository, 'findOne').mockResolvedValue(tripMock);
+      jest.spyOn(invoicesService, 'create').mockImplementation();
+      jest.spyOn(tripsRepository, 'save').mockResolvedValue(tripMock);
+      jest
+        .spyOn(TripToDtoMapper, 'toUpdateTripResponseDto')
+        .mockReturnValue(updateTripResponseDtoMock);
+
+      const result = await service.update(
+        tripMock.id,
+        updateTripRequestDtoMock,
+      );
+
+      expect(tripsRepository.findOne).toHaveBeenCalledWith({
+        where: { id: tripMock.id },
+      });
+      expect(tripsRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining(updateTripRequestDtoMock),
+      );
+      expect(result).toEqual(updateTripResponseDtoMock);
+    });
+
+    it('should throw NotFoundException if the trip does not exist', async () => {
+      jest.spyOn(tripsRepository, 'findOne').mockResolvedValue(null);
+
+      await expect(
+        service.update(tripMock.id, updateTripRequestDtoMock),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw ConflictException if the trip is already completed or canceled', async () => {
+      const completedTripMock = { ...tripMock, status: TripStatus.Completed };
+      jest
+        .spyOn(tripsRepository, 'findOne')
+        .mockResolvedValue(completedTripMock);
+
+      await expect(
+        service.update(completedTripMock.id, updateTripRequestDtoMock),
+      ).rejects.toThrow(ConflictException);
+    });
+
+    it('should throw BadRequestException if required fields for completed trips are missing', async () => {
+      const incompleteUpdateMock = {
+        status: TripStatus.Completed,
+      };
+
+      jest.spyOn(tripsRepository, 'findOne').mockResolvedValue(tripMock);
+
+      await expect(
+        service.update(tripMock.id, incompleteUpdateMock),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should create an invoice if the trip status is updated to completed', async () => {
+      console.log(tripMock);
+      jest.spyOn(tripsRepository, 'findOne').mockResolvedValue(tripMock);
+      jest.spyOn(invoicesService, 'create').mockImplementation();
+      jest.spyOn(tripsRepository, 'save').mockResolvedValue(tripMock);
+
+      await service.update(tripMock.id, updateTripRequestDtoMock);
+
+      expect(invoicesService.create).toHaveBeenCalledWith(tripMock);
+    });
+  });
+
+  describe('findInvoiceByTripId', () => {
+    it('should return an invoice DTO when an invoice exists for the trip ID', async () => {
+      const tripId = '292bd0aa-15a3-4984-87f7-7660151ddbfa';
+      const invoiceMock = new Invoice();
+      const invoiceResponseDtoMock = new GetInvoiceResponseDto();
+
+      jest
+        .spyOn(invoicesService, 'findOneByTripId')
+        .mockResolvedValue(invoiceMock);
+      jest
+        .spyOn(InvoiceToDtoMapper, 'toGetInvoiceResponseDto')
+        .mockReturnValue(invoiceResponseDtoMock);
+
+      const result = await service.findInvoiceByTripId(tripId);
+
+      expect(invoicesService.findOneByTripId).toHaveBeenCalledTimes(1);
+      expect(invoicesService.findOneByTripId).toHaveBeenCalledWith(tripId);
+      expect(InvoiceToDtoMapper.toGetInvoiceResponseDto).toHaveBeenCalledTimes(
+        1,
+      );
+      expect(InvoiceToDtoMapper.toGetInvoiceResponseDto).toHaveBeenCalledWith(
+        invoiceMock,
+      );
+      expect(result).toEqual(invoiceResponseDtoMock);
+    });
+
+    it('should throw a NotFoundException when no invoice is found for the trip ID', async () => {
+      const tripId = '487d62b7-99b8-47a9-b8ab-ce274c153ac2';
+
+      jest.spyOn(invoicesService, 'findOneByTripId').mockResolvedValue(null);
+
+      await expect(service.findInvoiceByTripId(tripId)).rejects.toThrow(
+        NotFoundException,
       );
     });
   });
