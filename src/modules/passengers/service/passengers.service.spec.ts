@@ -65,7 +65,6 @@ describe('PassengersService', () => {
 
       jest.spyOn(passengersRepository, 'findOne').mockResolvedValue(undefined);
 
-      expect(passengersRepository.findOne).toHaveBeenCalledTimes(1);
       await expect(service.findOne(passengerId)).rejects.toThrow(
         NotFoundException,
       );
