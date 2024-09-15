@@ -28,6 +28,11 @@ describe('DriversService', () => {
     );
   });
 
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+    expect(driversRepository).toBeDefined();
+  });
+
   describe('driverExists', () => {
     it('should return true if driver exists', async () => {
       const driverId = '14797f88-ed1f-434a-b1eb-1e242a433ae1';
