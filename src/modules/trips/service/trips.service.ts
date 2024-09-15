@@ -81,6 +81,7 @@ export class TripsService {
     trip.status = TripStatus.Active;
 
     const tripSaved = await this.tripsRepository.save(trip);
+    await this.driversService.toggleDriverAvailability(trip.driverId);
 
     return TripToDtoMapper.toCreateTripResponseDto(tripSaved);
   }
@@ -101,6 +102,13 @@ export class TripsService {
 
     const tripSaved = await this.tripsRepository.save(trip);
 
+    if (
+      updateTripRequestDto.status === TripStatus.Completed ||
+      updateTripRequestDto.status === TripStatus.Canceled
+    ) {
+      await this.driversService.toggleDriverAvailability(trip.driverId);
+    }
+
     return TripToDtoMapper.toUpdateTripResponseDto(tripSaved);
   }
 
@@ -114,6 +122,17 @@ export class TripsService {
     }
 
     return InvoiceToDtoMapper.toGetInvoiceResponseDto(invoice);
+  }
+
+  async isPassengerInActiveTrip(passengerId: string): Promise<boolean> {
+    const activeTrip = await this.tripsRepository.findOne({
+      where: {
+        passengerId: passengerId,
+        status: TripStatus.Active,
+      },
+    });
+
+    return !!activeTrip;
   }
 
   private async validateTripCreate(
@@ -138,6 +157,13 @@ export class TripsService {
     );
     if (!passengerExists) {
       throw new NotFoundException('Passenger not found');
+    }
+
+    const passengerInActiveTrip = await this.isPassengerInActiveTrip(
+      createTripRequestDto.passengerId,
+    );
+    if (passengerInActiveTrip) {
+      throw new ConflictException('Passenger is already in an active trip');
     }
   }
 

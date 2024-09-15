@@ -54,6 +54,7 @@ describe('TripsService', () => {
           useValue: {
             driverExists: jest.fn(),
             isDriverAvailable: jest.fn(),
+            toggleDriverAvailability: jest.fn(),
           },
         },
         {
@@ -98,6 +99,8 @@ describe('TripsService', () => {
       jest.spyOn(driversService, 'driverExists').mockResolvedValue(true);
       jest.spyOn(driversService, 'isDriverAvailable').mockResolvedValue(true);
       jest.spyOn(passengersService, 'passengerExists').mockResolvedValue(true);
+      jest.spyOn(driversService, 'driverExists').mockResolvedValue(true);
+      jest.spyOn(service, 'isPassengerInActiveTrip').mockResolvedValue(false);
       jest.spyOn(tripsRepository, 'create').mockReturnValue(tripMock);
       jest.spyOn(tripsRepository, 'save').mockResolvedValue(tripSavedMock);
       jest
@@ -231,7 +234,6 @@ describe('TripsService', () => {
     });
 
     it('should create an invoice if the trip status is updated to completed', async () => {
-      console.log(tripMock);
       jest.spyOn(tripsRepository, 'findOne').mockResolvedValue(tripMock);
       jest.spyOn(invoicesService, 'create').mockImplementation();
       jest.spyOn(tripsRepository, 'save').mockResolvedValue(tripMock);

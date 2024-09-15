@@ -135,4 +135,17 @@ export class DriversService {
 
     return driver.isAvailable;
   }
+
+  async toggleDriverAvailability(id: string): Promise<void> {
+    const driver = await this.driversRepository.findOne({
+      where: { id },
+    });
+
+    if (!driver) {
+      throw new NotFoundException(`Driver with ID ${id} not found`);
+    }
+
+    driver.isAvailable = !driver.isAvailable;
+    await this.driversRepository.save(driver);
+  }
 }
